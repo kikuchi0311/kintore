@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>KINTORE LOG</title>
+<style>
+  :root {
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --text-color: #e0e0e0;
+    --accent-color: #ff453a;
+    --input-bg: #2c2c2c;
+    --border-radius: 12px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    padding-bottom: 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1 {
+    text-align: center;
+    font-weight: bold;
+    color: var(--text-color);
+    margin: 0 0 5px 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 25px;
+  }
+
+  .section-label {
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    font-weight: bold;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    border-left: 3px solid var(--accent-color);
+    padding-left: 10px;
+  }
+
+  /* Grid Layout for Warmups */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .card {
+    background-color: var(--card-bg);
+    padding: 12px;
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  label {
+    font-size: 0.75rem;
+    color: #aaa;
+    margin-bottom: 5px;
+    line-height: 1.2;
+    display: block;
+  }
+
+  .input-group {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+  }
+
+  input[type="number"], input[type="text"], select {
+    background-color: var(--input-bg);
+    border: 1px solid #333;
+    color: #fff;
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 1rem;
+    width: 100%;
+    text-align: center;
+    -webkit-appearance: none;
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  .unit {
+    font-size: 0.75rem;
+    color: #666;
+    white-space: nowrap;
+  }
+
+  /* Main Event Styling */
+  .main-event-wrapper {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .sets-container {
+    margin-top: 10px;
+  }
+
+  .set-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .set-label {
+    font-size: 0.8rem;
+    color: #666;
+    width: 30px;
+    text-align: center;
+  }
+
+  .add-set-btn {
+    background-color: #333;
+    color: #aaa;
+    border: 1px dashed #555;
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-top: 5px;
+  }
+  .add-set-btn:active {
+    background-color: #444;
+  }
+
+  /* Auxiliary Training (Step 3) */
+  .aux-row {
+    background-color: var(--card-bg);
+    padding: 10px;
+    border-radius: var(--border-radius);
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .aux-inputs {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  /* Memo */
+  .memo-container {
+    margin-top: 20px;
+  }
+  #memo-input {
+    text-align: left;
+    padding: 12px;
+  }
+
+  /* Button */
+  .btn-container {
+    margin-top: 30px;
+    text-align: center;
+  }
+
+  button#generate-btn {
+    background: linear-gradient(135deg, #ff453a, #d63a30);
+    color: white;
+    border: none;
+    padding: 16px 40px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 300px;
+    box-shadow: 0 4px 15px rgba(255, 69, 58, 0.4);
+  }
+
+  button#generate-btn:active {
+    transform: scale(0.98);
+  }
+
+  /* Result Area */
+  #result-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.95);
+    z-index: 1000;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  #result-img {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    object-fit: contain;
+  }
+
+  .modal-text {
+    color: #fff;
+    margin-top: 15px;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+  
+  .close-btn {
+    margin-top: 20px;
+    color: #fff;
+    background: #333;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+
+  canvas { display: none; }
+</style>
+</head>
+<body>
+
+<h1>KINTORE</h1>
+<p class="subtitle">TRAINING LOG</p>
+
+<div class="section-label">Step 1: アップ (Warm-up)</div>
+<div class="grid">
+  <div class="card"><label>1. Seated Row</label><div class="input-group"><input type="number" id="w1" value="40"><span class="unit">kg</span></div></div>
+  <div class="card"><label>2. Shoulder Press</label><div class="input-group"><input type="number" id="w2" value="30"><span class="unit">kg</span></div></div>
+  <div class="card"><label>3. Butterfly</label><div class="input-group"><input type="number" id="w3" value="25"><span class="unit">kg</span></div></div>
+  <div class="card"><label>4. Triceps PD</label><div class="input-group"><input type="number" id="w4" value="30"><span class="unit">kg</span></div></div>
+  <div class="card"><label>5. Arm Curl</label><div class="input-group"><input type="number" id="w5" value="30"><span class="unit">kg</span></div></div>
+  <div class="card"><label>6. Leg Ext</label><div class="input-group"><input type="number" id="w6" value="50"><span class="unit">kg</span></div></div>
+  <div class="card"><label>7. Leg Curl</label><div class="input-group"><input type="number" id="w7" value="35"><span class="unit">kg</span></div></div>
+  <div class="card"><label>8. Hack Lift</label><div class="input-group"><input type="number" id="w8" value="40"><span class="unit">kg</span></div></div>
+</div>
+
+<div class="section-label">Step 2: メイン種目 (BIG 3)</div>
+
+<div class="main-event-wrapper">
+  <select id="main1-type">
+    <option value="BENCH PRESS" selected>BENCH PRESS (ベンチプレス)</option>
+    <option value="SQUAT">SQUAT (スクワット)</option>
+    <option value="DEADLIFT">DEADLIFT (デッドリフト)</option>
+  </select>
+  <div id="sets-container-1" class="sets-container"></div>
+  <button class="add-set-btn" onclick="addSet('sets-container-1')">+ セットを追加</button>
+</div>
+
+<div class="main-event-wrapper">
+  <select id="main2-type">
+    <option value="NONE">-- 2種目め (なし) --</option>
+    <option value="SQUAT" selected>SQUAT (スクワット)</option>
+    <option value="BENCH PRESS">BENCH PRESS (ベンチプレス)</option>
+    <option value="DEADLIFT">DEADLIFT (デッドリフト)</option>
+  </select>
+  <div id="sets-container-2" class="sets-container"></div>
+  <button class="add-set-btn" onclick="addSet('sets-container-2')">+ セットを追加</button>
+</div>
+
+<div class="section-label">Step 3: 補助トレ (Auxiliary)</div>
+<div id="aux-container">
+  <div class="aux-row">
+    <select id="aux1-type">
+      <option value="NONE" selected>-- 選択してください --</option>
+      <option value="Leg Press">Leg Press (レッグプレス)</option>
+      <option value="Leg Extension">Leg Extension (レッグEXT)</option>
+      <option value="Leg Curl">Leg Curl (レッグカール)</option>
+      <option value="Butterfly">Butterfly (バタフライ)</option>
+      <option value="Seated Row">Seated Row (ローイング)</option>
+      <option value="Shoulder Press">Shoulder Press (プレス)</option>
+      <option value="Triceps PD">Triceps PD (三頭)</option>
+      <option value="Arm Curl">Arm Curl (二頭)</option>
+      <option value="Hack Lift">Hack Lift (ハック)</option>
+    </select>
+    <div class="aux-inputs">
+      <input type="number" id="aux1-w" placeholder="kg"><span class="unit">kg</span>
+      <input type="number" id="aux1-r" placeholder="reps"><span class="unit">reps</span>
+    </div>
+  </div>
+  <div class="aux-row">
+    <select id="aux2-type">
+      <option value="NONE" selected>-- 選択してください --</option>
+      <option value="Leg Press">Leg Press (レッグプレス)</option>
+      <option value="Leg Extension">Leg Extension (レッグEXT)</option>
+      <option value="Leg Curl">Leg Curl (レッグカール)</option>
+      <option value="Butterfly">Butterfly (バタフライ)</option>
+      <option value="Seated Row">Seated Row (ローイング)</option>
+      <option value="Shoulder Press">Shoulder Press (プレス)</option>
+      <option value="Triceps PD">Triceps PD (三頭)</option>
+      <option value="Arm Curl">Arm Curl (二頭)</option>
+      <option value="Hack Lift">Hack Lift (ハック)</option>
+    </select>
+    <div class="aux-inputs">
+      <input type="number" id="aux2-w" placeholder="kg"><span class="unit">kg</span>
+      <input type="number" id="aux2-r" placeholder="reps"><span class="unit">reps</span>
+    </div>
+  </div>
+  <div class="aux-row">
+    <select id="aux3-type">
+      <option value="NONE" selected>-- 選択してください --</option>
+      <option value="Leg Press">Leg Press (レッグプレス)</option>
+      <option value="Leg Extension">Leg Extension (レッグEXT)</option>
+      <option value="Leg Curl">Leg Curl (レッグカール)</option>
+      <option value="Butterfly">Butterfly (バタフライ)</option>
+      <option value="Seated Row">Seated Row (ローイング)</option>
+      <option value="Shoulder Press">Shoulder Press (プレス)</option>
+      <option value="Triceps PD">Triceps PD (三頭)</option>
+      <option value="Arm Curl">Arm Curl (二頭)</option>
+      <option value="Hack Lift">Hack Lift (ハック)</option>
+    </select>
+    <div class="aux-inputs">
+      <input type="number" id="aux3-w" placeholder="kg"><span class="unit">kg</span>
+      <input type="number" id="aux3-r" placeholder="reps"><span class="unit">reps</span>
+    </div>
+  </div>
+  <div class="aux-row">
+    <select id="aux4-type">
+      <option value="NONE" selected>-- 選択してください --</option>
+      <option value="Leg Press">Leg Press (レッグプレス)</option>
+      <option value="Leg Extension">Leg Extension (レッグEXT)</option>
+      <option value="Leg Curl">Leg Curl (レッグカール)</option>
+      <option value="Butterfly">Butterfly (バタフライ)</option>
+      <option value="Seated Row">Seated Row (ローイング)</option>
+      <option value="Shoulder Press">Shoulder Press (プレス)</option>
+      <option value="Triceps PD">Triceps PD (三頭)</option>
+      <option value="Arm Curl">Arm Curl (二頭)</option>
+      <option value="Hack Lift">Hack Lift (ハック)</option>
+    </select>
+    <div class="aux-inputs">
+      <input type="number" id="aux4-w" placeholder="kg"><span class="unit">kg</span>
+      <input type="number" id="aux4-r" placeholder="reps"><span class="unit">reps</span>
+    </div>
+  </div>
+</div>
+
+<div class="memo-container">
+  <label>Memo</label>
+  <input type="text" id="memo-input" placeholder="一言メモ (例: スクワットの深さ良かった)">
+</div>
+
+<div class="btn-container">
+  <button id="generate-btn">画像を生成 (Generate)</button>
+</div>
+
+<div id="result-modal">
+  <img id="result-img" src="" alt="Result">
+  <div class="modal-text">↓ 長押しして画像を保存 ↓</div>
+  <button class="close-btn" onclick="document.getElementById('result-modal').style.display='none'">閉じる</button>
+</div>
+
+<canvas id="logCanvas"></canvas>
+
+<script>
+  // 初期セット (各3セット)
+  window.onload = function() {
+    addSet('sets-container-1', 100, 5);
+    addSet('sets-container-1', null, null);
+    addSet('sets-container-1', null, null);
+    
+    addSet('sets-container-2', null, null);
+    addSet('sets-container-2', null, null);
+    addSet('sets-container-2', null, null);
+  };
+
+  function addSet(containerId, defaultW = null, defaultR = null) {
+    const container = document.getElementById(containerId);
+    const count = container.children.length + 1;
+    
+    const div = document.createElement('div');
+    div.className = 'set-row';
+    div.innerHTML = `
+      <span class="set-label">${count}</span>
+      <input type="number" class="mw" placeholder="kg" value="${defaultW !== null ? defaultW : ''}">
+      <input type="number" class="mr" placeholder="reps" value="${defaultR !== null ? defaultR : ''}">
+    `;
+    container.appendChild(div);
+  }
+
+  document.getElementById('generate-btn').addEventListener('click', () => {
+    const canvas = document.getElementById('logCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // データ取得
+    const type1 = document.getElementById('main1-type').value;
+    const sets1 = document.querySelectorAll('#sets-container-1 .set-row');
+    const type2 = document.getElementById('main2-type').value;
+    const sets2 = document.querySelectorAll('#sets-container-2 .set-row');
+
+    // Step 2 の高さを計算
+    let maxSets = 0;
+    if(type1 !== 'NONE') maxSets = Math.max(maxSets, sets1.length);
+    if(type2 !== 'NONE') maxSets = Math.max(maxSets, sets2.length);
+    
+    // Step 3 の高さ
+    let activeAuxCount = 0;
+    for(let i=1; i<=4; i++) {
+      if(document.getElementById(`aux${i}-type`).value !== 'NONE') activeAuxCount++;
+    }
+
+    // メモがあるか
+    const memo = document.getElementById('memo-input').value;
+    const memoHeight = memo ? 50 : 0;
+
+    // 全体の高さ計算 (Footer削除分調整)
+    let contentHeight = 400; // Header + Step1
+    if (maxSets > 0) {
+      contentHeight += 70; // Step2 Title + Header
+      contentHeight += maxSets * 30; // Sets
+      contentHeight += 30; // Margin
+    }
+    if (activeAuxCount > 0) {
+      contentHeight += 50; // Step3 Title
+      contentHeight += activeAuxCount * 35; // Items
+      contentHeight += 20; // Margin
+    }
+    contentHeight += memoHeight;
+    contentHeight += 40; // Bottom Margin (reduced)
+
+    // Canvas Size
+    canvas.width = 600;
+    canvas.height = contentHeight;
+
+    // --- Drawing Logic ---
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const centerX = canvas.width / 2;
+    
+    // Header
+    ctx.fillStyle = "#000000";
+    ctx.textAlign = "center";
+    ctx.font = "bold 40px Helvetica, Arial, sans-serif"; // Slightly larger
+    ctx.fillText("KINTORE", centerX, 55);
+    
+    ctx.font = "18px Helvetica, Arial, sans-serif";
+    ctx.fillStyle = "#555";
+    const date = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' });
+    ctx.fillText(date, centerX, 85);
+    drawLine(ctx, 105);
+
+    let y = 145;
+
+    // STEP 1: Warmup
+    ctx.textAlign = "left";
+    ctx.font = "bold 22px Helvetica, Arial, sans-serif";
+    ctx.fillStyle = "#000";
+    ctx.fillText("Step 1: アップ (Warm-up)", 40, y);
+    y += 40;
+
+    const guardians = [
+      { n: "1. Seated Row", w: document.getElementById('w1').value },
+      { n: "2. Shoulder Press", w: document.getElementById('w2').value },
+      { n: "3. Butterfly", w: document.getElementById('w3').value },
+      { n: "4. Triceps PD", w: document.getElementById('w4').value },
+      { n: "5. Arm Curl", w: document.getElementById('w5').value },
+      { n: "6. Leg Ext", w: document.getElementById('w6').value },
+      { n: "7. Leg Curl", w: document.getElementById('w7').value },
+      { n: "8. Hack Lift", w: document.getElementById('w8').value },
+    ];
+
+    ctx.font = "18px Helvetica, Arial, sans-serif";
+    guardians.forEach((g, i) => {
+      const x = i % 2 === 0 ? 40 : 320;
+      if (i % 2 === 0 && i !== 0) y += 30;
+      ctx.fillStyle = "#444";
+      ctx.textAlign = "left";
+      ctx.fillText(g.n, x, y);
+      ctx.fillStyle = "#000";
+      ctx.font = "bold 18px Helvetica, Arial, sans-serif";
+      ctx.textAlign = "right";
+      ctx.fillText(g.w + "kg", x + 240, y);
+      ctx.font = "18px Helvetica, Arial, sans-serif"; 
+    });
+    y += 50;
+    drawLine(ctx, y);
+    y += 40;
+
+    // STEP 2: Main Events (Table Layout with Grid Lines)
+    if (maxSets > 0) {
+      ctx.textAlign = "left";
+      ctx.font = "bold 22px Helvetica, Arial, sans-serif";
+      ctx.fillStyle = "#000";
+      ctx.fillText("Step 2: メイン種目", 40, y);
+      y += 20;
+
+      // Header Position
+      const headerY = y + 25;
+      
+      ctx.font = "bold 18px Helvetica, Arial, sans-serif";
+      ctx.fillStyle = "#cc0000"; // Red Accent
+      
+      if (type1 !== 'NONE') {
+        ctx.textAlign = "center";
+        ctx.fillText(type1.split(' ')[0], 170, headerY); 
+      }
+      if (type2 !== 'NONE') {
+        ctx.textAlign = "center";
+        ctx.fillText(type2.split(' ')[0], 430, headerY);
+      }
+      
+      y = headerY + 15;
+      
+      // Horizontal Line under Headers
+      ctx.beginPath();
+      ctx.moveTo(40, y);
+      ctx.lineTo(560, y);
+      ctx.strokeStyle = "#555";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      
+      y += 30; // Start of Data
+
+      // Draw Sets
+      ctx.fillStyle = "#000";
+      ctx.font = "20px Helvetica, Arial, sans-serif";
+
+      for (let i = 0; i < maxSets; i++) {
+        // Left Column (Type 1)
+        if (i < sets1.length && type1 !== 'NONE') {
+          const w = sets1[i].querySelector('.mw').value;
+          const r = sets1[i].querySelector('.mr').value;
+          if (w && r) {
+             ctx.textAlign = "center";
+             ctx.fillText(`${w}kg × ${r}`, 170, y);
+          }
+        }
+        // Right Column (Type 2)
+        if (i < sets2.length && type2 !== 'NONE') {
+          const w = sets2[i].querySelector('.mw').value;
+          const r = sets2[i].querySelector('.mr').value;
+          if (w && r) {
+             ctx.textAlign = "center";
+             ctx.fillText(`${w}kg × ${r}`, 430, y);
+          }
+        }
+        y += 30;
+      }
+      
+      // Vertical Line in the middle
+      const tableBottomY = y - 15;
+      ctx.beginPath();
+      ctx.moveTo(300, headerY - 25);
+      ctx.lineTo(300, tableBottomY);
+      ctx.strokeStyle = "#ccc";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      y += 10;
+      drawLine(ctx, y);
+      y += 40;
+    }
+
+    // STEP 3: Auxiliary
+    if (activeAuxCount > 0) {
+      ctx.textAlign = "left";
+      ctx.font = "bold 22px Helvetica, Arial, sans-serif";
+      ctx.fillStyle = "#000";
+      ctx.fillText("Step 3: 補助トレ", 40, y);
+      y += 35;
+
+      for(let i=1; i<=4; i++) {
+        const type = document.getElementById(`aux${i}-type`).value;
+        const w = document.getElementById(`aux${i}-w`).value;
+        const r = document.getElementById(`aux${i}-r`).value;
+
+        if (type !== "NONE") {
+          ctx.font = "18px Helvetica, Arial, sans-serif";
+          ctx.textAlign = "left";
+          ctx.fillStyle = "#000";
+          ctx.fillText("・" + type, 60, y);
+
+          if (w && r) {
+            ctx.textAlign = "right";
+            ctx.font = "bold 20px Helvetica, Arial, sans-serif";
+            ctx.fillText(`${w}kg × ${r}`, 560, y);
+          }
+          y += 35;
+        }
+      }
+      y += 20;
+    }
+
+    // Memo
+    if (memo) {
+      ctx.textAlign = "center";
+      ctx.font = "italic 18px Helvetica, Arial, sans-serif";
+      ctx.fillStyle = "#000";
+      ctx.fillText("Note: " + memo, centerX, y);
+      y += 30;
+    }
+
+    // Footer Removed (Just blank space at bottom)
+
+    // Show Image
+    const dataUrl = canvas.toDataURL('image/png');
+    document.getElementById('result-img').src = dataUrl;
+    document.getElementById('result-modal').style.display = 'flex';
+  });
+
+  function drawLine(ctx, y) {
+    ctx.beginPath();
+    ctx.moveTo(40, y);
+    ctx.lineTo(560, y);
+    ctx.strokeStyle = "#ddd";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+</script>
+
+</body>
+</html>

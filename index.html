@@ -25,20 +25,21 @@
   .set-label { font-size: 0.75rem; color: #666; width: 20px; text-align: center; }
   .rpe-input { width: 45px !important; font-size: 0.8rem !important; color: #ffd700 !important; border-color: #444 !important; }
   
-  /* --- iPhone Tap Fix --- */
-  .fail-label { display: flex; align-items: center; justify-content: center; cursor: pointer; width: 30px; height: 38px; position: relative; }
-  .fail-checkbox { 
-    position: absolute; 
-    opacity: 0; 
-    width: 100%; 
-    height: 100%; 
-    margin: 0; 
-    cursor: pointer;
-    z-index: 2; 
-  } 
-  .fail-icon { font-size: 1.2rem; color: #444; transition: color 0.2s; user-select: none; z-index: 1; }
-  .fail-checkbox:checked + .fail-icon { color: #ff453a; text-shadow: 0 0 5px rgba(255, 69, 58, 0.5); }
-  /* ---------------------- */
+  /* --- 修正箇所: シンプルなボタンクラス --- */
+  .fail-btn { 
+    display: flex; align-items: center; justify-content: center; 
+    width: 35px; height: 35px; 
+    font-size: 1.2rem; color: #444; 
+    cursor: pointer; user-select: none;
+    transition: all 0.2s ease;
+    border-radius: 50%; /* タップしやすいように */
+  }
+  .fail-btn:hover { background-color: rgba(255,255,255,0.05); }
+  .fail-btn.active { 
+    color: #ff453a; 
+    text-shadow: 0 0 8px rgba(255, 69, 58, 0.6); 
+  }
+  /* -------------------------------------- */
 
   .add-set-btn { background-color: #333; color: #aaa; border: 1px dashed #555; width: 100%; padding: 8px; border-radius: 6px; font-size: 0.85rem; margin-top: 5px; }
   .aux-row { background-color: var(--card-bg); padding: 10px; border-radius: var(--border-radius); margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; }
@@ -103,7 +104,8 @@
 <div class="section-label">Step 3: 補助トレ (Auxiliary)</div>
 <div id="aux-container">
   <script>
-    const auxOps=`<option value="NONE">-- Select --</option><option value="Leg Press">Leg Press</option><option value="Leg Extension">Leg Extension</option><option value="Leg Curl">Leg Curl</option><option value="Butterfly">Butterfly</option><option value="Seated Row">Seated Row</option><option value="Shoulder Press">Shoulder Press</option><option value="Triceps PD">Triceps PD</option><option value="Arm Curl">Arm Curl</option><option value="Hack Lift">Hack Lift</option>`;
+    // ラットプルダウンを追加
+    const auxOps=`<option value="NONE">-- Select --</option><option value="Lat Pulldown">Lat Pulldown (ラットプル)</option><option value="Leg Press">Leg Press</option><option value="Leg Extension">Leg Extension</option><option value="Leg Curl">Leg Curl</option><option value="Butterfly">Butterfly</option><option value="Seated Row">Seated Row</option><option value="Shoulder Press">Shoulder Press</option><option value="Triceps PD">Triceps PD</option><option value="Arm Curl">Arm Curl</option><option value="Hack Lift">Hack Lift</option>`;
     for(let i=1;i<=4;i++) document.write(`<div class="aux-row"><select id="aux${i}-type">${auxOps}</select><div class="aux-inputs"><input type="number" id="aux${i}-w" placeholder="kg"><span class="unit">kg</span><input type="number" id="aux${i}-r" placeholder="reps"><span class="unit">reps</span></div></div>`);
   </script>
 </div>
@@ -159,7 +161,7 @@
   window.onload = function() {
     let config = JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG)) || {};
     
-    // URLが保存されていない、またはHTMLのデフォルトと違う場合は更新
+    // URL設定
     const defaultGasUrl = "https://script.google.com/macros/s/AKfycbyOJvgxN7KjRdD1JQR6shRDyt0Cl_GpMFBjdcmZoc-j4LbgI6MNHA1aZ8SMI9JSCfTC/exec";
     if (!config.gasUrl) {
       config.gasUrl = defaultGasUrl;
@@ -182,18 +184,21 @@
     localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(config));
   });
 
+  // --- 修正: Toggle関数 ---
+  function toggleFail(btn) {
+    btn.classList.toggle('active');
+  }
+
   function addSet(containerId, w=null, r=null, rpe=null, fail=false) {
     const c = document.getElementById(containerId);
     const div = document.createElement('div');
     div.className = 'set-row';
-    const failChecked = fail ? 'checked' : '';
+    // クラスによる判定に変更
+    const activeClass = fail ? 'active' : '';
     div.innerHTML = `
       <span class="set-label">${c.children.length+1}</span>
       <input type="number" class="mw" placeholder="kg" value="${w!==null?w:''}"><input type="number" class="mr" placeholder="reps" value="${r!==null?r:''}"><input type="number" class="rpe-input" placeholder="RPE" value="${rpe!==null?rpe:''}">
-      <label class="fail-label" title="失敗/中断">
-        <input type="checkbox" class="fail-checkbox" ${failChecked}>
-        <span class="fail-icon">⚠️</span>
-      </label>
+      <div class="fail-btn ${activeClass}" onclick="toggleFail(this)">⚠️</div>
     `;
     c.appendChild(div);
   }
@@ -229,7 +234,7 @@
       w: r.querySelector('.mw').value, 
       r: r.querySelector('.mr').value, 
       rpe: r.querySelector('.rpe-input').value,
-      fail: r.querySelector('.fail-checkbox').checked
+      fail: r.querySelector('.fail-btn').classList.contains('active') // クラス判定に変更
     }));
   }
 
@@ -462,7 +467,7 @@
         ctx.fillStyle="#000"; ctx.font="20px Helvetica";
         for(let i=0; i<maxSets; i++){
             if(i<sets1.length && type1!=='NONE'){
-                const w=sets1[i].querySelector('.mw').value, r=sets1[i].querySelector('.mr').value, rpe=sets1[i].querySelector('.rpe-input').value, fail=sets1[i].querySelector('.fail-checkbox').checked;
+                const w=sets1[i].querySelector('.mw').value, r=sets1[i].querySelector('.mr').value, rpe=sets1[i].querySelector('.rpe-input').value, fail=sets1[i].querySelector('.fail-btn').classList.contains('active');
                 if(w||r) {
                     let str = `${w}kg × ${r}`;
                     if(rpe) str += ` (@${rpe})`;
@@ -472,7 +477,7 @@
                 }
             }
             if(i<sets2.length && type2!=='NONE'){
-                const w=sets2[i].querySelector('.mw').value, r=sets2[i].querySelector('.mr').value, rpe=sets2[i].querySelector('.rpe-input').value, fail=sets2[i].querySelector('.fail-checkbox').checked;
+                const w=sets2[i].querySelector('.mw').value, r=sets2[i].querySelector('.mr').value, rpe=sets2[i].querySelector('.rpe-input').value, fail=sets2[i].querySelector('.fail-btn').classList.contains('active');
                 if(w||r) {
                     let str = `${w}kg × ${r}`;
                     if(rpe) str += ` (@${rpe})`;

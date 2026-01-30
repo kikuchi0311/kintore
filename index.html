@@ -4,366 +4,120 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>KINTORE LOG</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-  :root {
-    --bg-color: #121212;
-    --card-bg: #1e1e1e;
-    --text-color: #e0e0e0;
-    --accent-color: #ff453a;
-    --input-bg: #2c2c2c;
-    --border-radius: 12px;
-  }
-
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    margin: 0;
-    padding: 20px;
-    padding-bottom: 80px;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  h1 {
-    text-align: center;
-    font-weight: bold;
-    color: var(--text-color);
-    margin: 0 0 5px 0;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  .subtitle {
-    text-align: center;
-    font-size: 0.8rem;
-    color: #888;
-    margin-bottom: 25px;
-  }
-
-  .section-label {
-    font-size: 0.9rem;
-    color: var(--accent-color);
-    font-weight: bold;
-    margin-top: 30px;
-    margin-bottom: 10px;
-    border-left: 3px solid var(--accent-color);
-    padding-left: 10px;
-  }
-
-  /* Grid Layout for Warmups */
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .card {
-    background-color: var(--card-bg);
-    padding: 12px;
-    border-radius: var(--border-radius);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  label {
-    font-size: 0.75rem;
-    color: #aaa;
-    margin-bottom: 5px;
-    line-height: 1.2;
-    display: block;
-  }
-
-  .input-group {
-    display: flex;
-    align-items: baseline;
-    gap: 5px;
-  }
-
-  input[type="number"], input[type="text"], select {
-    background-color: var(--input-bg);
-    border: 1px solid #333;
-    color: #fff;
-    border-radius: 6px;
-    padding: 8px;
-    font-size: 1rem;
-    width: 100%;
-    text-align: center;
-    -webkit-appearance: none;
-  }
-
-  input:focus, select:focus {
-    outline: none;
-    border-color: var(--accent-color);
-  }
-
-  .unit {
-    font-size: 0.75rem;
-    color: #666;
-    white-space: nowrap;
-  }
-
-  /* Main Event Styling */
-  .main-event-wrapper {
-    background-color: var(--card-bg);
-    border-radius: var(--border-radius);
-    padding: 15px;
-    margin-bottom: 15px;
-  }
-
-  .sets-container {
-    margin-top: 10px;
-  }
-
-  .set-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-    animation: fadeIn 0.3s ease;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .set-label {
-    font-size: 0.8rem;
-    color: #666;
-    width: 30px;
-    text-align: center;
-  }
-
-  .add-set-btn {
-    background-color: #333;
-    color: #aaa;
-    border: 1px dashed #555;
-    width: 100%;
-    padding: 10px;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    margin-top: 5px;
-  }
-  .add-set-btn:active {
-    background-color: #444;
-  }
-
-  /* Auxiliary Training (Step 3) */
-  .aux-row {
-    background-color: var(--card-bg);
-    padding: 10px;
-    border-radius: var(--border-radius);
-    margin-bottom: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
+  :root { --bg-color: #121212; --card-bg: #1e1e1e; --text-color: #e0e0e0; --accent-color: #ff453a; --input-bg: #2c2c2c; --border-radius: 12px; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; padding-bottom: 120px; -webkit-font-smoothing: antialiased; }
+  h1 { text-align: center; font-weight: bold; color: var(--text-color); margin: 0; letter-spacing: 2px; text-transform: uppercase; font-size: 1.8rem; }
+  .focus-wrapper { display: flex; justify-content: center; margin-bottom: 20px; }
+  #focus-select { background: transparent; color: var(--accent-color); border: 1px solid var(--accent-color); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; text-align: center; width: auto; font-weight: bold; text-transform: uppercase; }
+  .section-label { font-size: 0.9rem; color: var(--accent-color); font-weight: bold; margin-top: 30px; margin-bottom: 10px; border-left: 3px solid var(--accent-color); padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .card { background-color: var(--card-bg); padding: 10px; border-radius: var(--border-radius); display: flex; flex-direction: column; justify-content: space-between; }
+  label { font-size: 0.7rem; color: #aaa; margin-bottom: 4px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .input-group { display: flex; align-items: baseline; gap: 4px; }
+  input, select { background-color: var(--input-bg); border: 1px solid #333; color: #fff; border-radius: 6px; padding: 8px; font-size: 1rem; width: 100%; text-align: center; -webkit-appearance: none; }
+  input:focus, select:focus { outline: none; border-color: var(--accent-color); }
+  .unit { font-size: 0.7rem; color: #666; white-space: nowrap; }
+  .main-event-wrapper { background-color: var(--card-bg); border-radius: var(--border-radius); padding: 12px; margin-bottom: 12px; }
+  .sets-container { margin-top: 5px; }
+  .set-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .set-label { font-size: 0.75rem; color: #666; width: 20px; text-align: center; }
+  .rpe-input { width: 45px !important; font-size: 0.8rem !important; color: #ffd700 !important; border-color: #444 !important; }
+  .fail-label { display: flex; align-items: center; justify-content: center; cursor: pointer; width: 30px; height: 38px; }
+  .fail-checkbox { display: none; } 
+  .fail-icon { font-size: 1.2rem; color: #444; transition: color 0.2s; user-select: none; }
+  .fail-checkbox:checked + .fail-icon { color: #ff453a; text-shadow: 0 0 5px rgba(255, 69, 58, 0.5); }
+  .add-set-btn { background-color: #333; color: #aaa; border: 1px dashed #555; width: 100%; padding: 8px; border-radius: 6px; font-size: 0.85rem; margin-top: 5px; }
+  .aux-row { background-color: var(--card-bg); padding: 10px; border-radius: var(--border-radius); margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; }
+  .aux-inputs { display: flex; gap: 8px; align-items: center; }
+  .memo-container { margin-top: 20px; }
+  #memo-input { text-align: left; padding: 12px; }
+  .btn-container { margin-top: 30px; text-align: center; position: sticky; bottom: 20px; z-index: 100; }
+  button#generate-btn { background: linear-gradient(135deg, #ff453a, #d63a30); color: white; border: none; padding: 16px 40px; font-size: 1.1rem; font-weight: bold; border-radius: 30px; width: 90%; max-width: 350px; box-shadow: 0 4px 20px rgba(0,0,0,0.6); backdrop-filter: blur(5px); transition: transform 0.1s; }
+  button#generate-btn:active { transform: scale(0.98); }
+  button#generate-btn.sending { background: #555; cursor: wait; }
+  #sync-status { margin-top: 8px; font-size: 0.75rem; color: #666; min-height: 1.2em; }
   
-  .aux-inputs {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
+  .settings-area { margin-top: 50px; padding: 20px; background: #1a1a1a; border-radius: 12px; }
+  #gas-url-input { font-size: 0.8rem; color: #aaa; text-align: left; margin-bottom: 10px; }
+  .settings-btn { background: #333; color: #ccc; border: 1px solid #444; padding: 8px 15px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; margin-top: 5px; }
 
-  /* Memo */
-  .memo-container {
-    margin-top: 20px;
-  }
-  #memo-input {
-    text-align: left;
-    padding: 12px;
-  }
-
-  /* Button */
-  .btn-container {
-    margin-top: 30px;
-    text-align: center;
-  }
-
-  button#generate-btn {
-    background: linear-gradient(135deg, #ff453a, #d63a30);
-    color: white;
-    border: none;
-    padding: 16px 40px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    border-radius: 30px;
-    cursor: pointer;
-    width: 100%;
-    max-width: 300px;
-    box-shadow: 0 4px 15px rgba(255, 69, 58, 0.4);
-  }
-
-  button#generate-btn:active {
-    transform: scale(0.98);
-  }
-
-  /* Result Area */
-  #result-modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.95);
-    z-index: 1000;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-
-  #result-img {
-    max-width: 100%;
-    max-height: 80vh;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    object-fit: contain;
-  }
-
-  .modal-text {
-    color: #fff;
-    margin-top: 15px;
-    text-align: center;
-    font-size: 0.9rem;
-  }
+  #result-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+  #result-img { max-width: 100%; max-height: 80vh; border-radius: 8px; object-fit: contain; }
+  .modal-text { color: #fff; margin-top: 15px; text-align: center; font-size: 0.9rem; }
+  .close-btn { margin-top: 20px; color: #fff; background: #333; border: none; padding: 10px 30px; border-radius: 20px; }
   
-  .close-btn {
-    margin-top: 20px;
-    color: #fff;
-    background: #333;
-    border: none;
-    padding: 10px 30px;
-    border-radius: 20px;
-    cursor: pointer;
-  }
-
+  .chart-container { margin-top: 10px; background-color: var(--card-bg); padding: 15px; border-radius: var(--border-radius); position: relative; }
+  #toggle-chart-btn { position: absolute; top: 15px; right: 15px; background: #333; color: #fff; border: 1px solid #555; padding: 4px 10px; border-radius: 15px; font-size: 0.7rem; cursor: pointer; z-index: 10; }
   canvas { display: none; }
 </style>
 </head>
 <body>
 
 <h1>KINTORE</h1>
-<p class="subtitle">TRAINING LOG</p>
+<div class="focus-wrapper">
+  <select id="focus-select">
+    <option value="STRENGTH">FOCUS: STRENGTH</option>
+    <option value="HYPERTROPHY">FOCUS: HYPERTROPHY</option>
+    <option value="TECHNIQUE">FOCUS: TECHNIQUE</option>
+    <option value="SPEED">FOCUS: SPEED</option>
+    <option value="DELOAD">FOCUS: DELOAD</option>
+    <option value="NONE">FOCUS: NONE</option>
+  </select>
+</div>
 
 <div class="section-label">Step 1: アップ (Warm-up)</div>
 <div class="grid">
-  <div class="card"><label>1. Seated Row</label><div class="input-group"><input type="number" id="w1" value="40"><span class="unit">kg</span></div></div>
-  <div class="card"><label>2. Shoulder Press</label><div class="input-group"><input type="number" id="w2" value="30"><span class="unit">kg</span></div></div>
-  <div class="card"><label>3. Butterfly</label><div class="input-group"><input type="number" id="w3" value="25"><span class="unit">kg</span></div></div>
-  <div class="card"><label>4. Triceps PD</label><div class="input-group"><input type="number" id="w4" value="30"><span class="unit">kg</span></div></div>
-  <div class="card"><label>5. Arm Curl</label><div class="input-group"><input type="number" id="w5" value="30"><span class="unit">kg</span></div></div>
-  <div class="card"><label>6. Leg Ext</label><div class="input-group"><input type="number" id="w6" value="50"><span class="unit">kg</span></div></div>
-  <div class="card"><label>7. Leg Curl</label><div class="input-group"><input type="number" id="w7" value="35"><span class="unit">kg</span></div></div>
-  <div class="card"><label>8. Hack Lift</label><div class="input-group"><input type="number" id="w8" value="40"><span class="unit">kg</span></div></div>
+  <script>
+    const wList=["Seated Row","Shoulder Press","Butterfly","Triceps PD","Arm Curl","Leg Ext","Leg Curl","Hack Lift"];
+    const wDef=[40,30,25,30,30,50,35,40];
+    wList.forEach((n,i)=>document.write(`<div class="card"><label>${i+1}. ${n}</label><div class="input-group"><input type="number" id="w${i+1}" value="${wDef[i]}"><span class="unit">kg</span></div></div>`));
+  </script>
 </div>
 
 <div class="section-label">Step 2: メイン種目 (BIG 3)</div>
-
 <div class="main-event-wrapper">
-  <select id="main1-type">
-    <option value="BENCH PRESS" selected>BENCH PRESS (ベンチプレス)</option>
-    <option value="SQUAT">SQUAT (スクワット)</option>
-    <option value="DEADLIFT">DEADLIFT (デッドリフト)</option>
-  </select>
+  <select id="main1-type"><option value="BENCH PRESS" selected>BENCH PRESS</option><option value="SQUAT">SQUAT</option><option value="DEADLIFT">DEADLIFT</option></select>
   <div id="sets-container-1" class="sets-container"></div>
   <button class="add-set-btn" onclick="addSet('sets-container-1')">+ セットを追加</button>
 </div>
-
 <div class="main-event-wrapper">
-  <select id="main2-type">
-    <option value="NONE">-- 2種目め (なし) --</option>
-    <option value="SQUAT" selected>SQUAT (スクワット)</option>
-    <option value="BENCH PRESS">BENCH PRESS (ベンチプレス)</option>
-    <option value="DEADLIFT">DEADLIFT (デッドリフト)</option>
-  </select>
+  <select id="main2-type"><option value="NONE">-- 2種目め (なし) --</option><option value="SQUAT" selected>SQUAT</option><option value="BENCH PRESS">BENCH PRESS</option><option value="DEADLIFT">DEADLIFT</option></select>
   <div id="sets-container-2" class="sets-container"></div>
   <button class="add-set-btn" onclick="addSet('sets-container-2')">+ セットを追加</button>
 </div>
 
 <div class="section-label">Step 3: 補助トレ (Auxiliary)</div>
 <div id="aux-container">
-  <div class="aux-row">
-    <select id="aux1-type">
-      <option value="NONE" selected>-- 選択してください --</option>
-      <option value="Leg Press">Leg Press (レッグプレス)</option>
-      <option value="Leg Extension">Leg Extension (レッグEXT)</option>
-      <option value="Leg Curl">Leg Curl (レッグカール)</option>
-      <option value="Butterfly">Butterfly (バタフライ)</option>
-      <option value="Seated Row">Seated Row (ローイング)</option>
-      <option value="Shoulder Press">Shoulder Press (プレス)</option>
-      <option value="Triceps PD">Triceps PD (三頭)</option>
-      <option value="Arm Curl">Arm Curl (二頭)</option>
-      <option value="Hack Lift">Hack Lift (ハック)</option>
-    </select>
-    <div class="aux-inputs">
-      <input type="number" id="aux1-w" placeholder="kg"><span class="unit">kg</span>
-      <input type="number" id="aux1-r" placeholder="reps"><span class="unit">reps</span>
-    </div>
-  </div>
-  <div class="aux-row">
-    <select id="aux2-type">
-      <option value="NONE" selected>-- 選択してください --</option>
-      <option value="Leg Press">Leg Press (レッグプレス)</option>
-      <option value="Leg Extension">Leg Extension (レッグEXT)</option>
-      <option value="Leg Curl">Leg Curl (レッグカール)</option>
-      <option value="Butterfly">Butterfly (バタフライ)</option>
-      <option value="Seated Row">Seated Row (ローイング)</option>
-      <option value="Shoulder Press">Shoulder Press (プレス)</option>
-      <option value="Triceps PD">Triceps PD (三頭)</option>
-      <option value="Arm Curl">Arm Curl (二頭)</option>
-      <option value="Hack Lift">Hack Lift (ハック)</option>
-    </select>
-    <div class="aux-inputs">
-      <input type="number" id="aux2-w" placeholder="kg"><span class="unit">kg</span>
-      <input type="number" id="aux2-r" placeholder="reps"><span class="unit">reps</span>
-    </div>
-  </div>
-  <div class="aux-row">
-    <select id="aux3-type">
-      <option value="NONE" selected>-- 選択してください --</option>
-      <option value="Leg Press">Leg Press (レッグプレス)</option>
-      <option value="Leg Extension">Leg Extension (レッグEXT)</option>
-      <option value="Leg Curl">Leg Curl (レッグカール)</option>
-      <option value="Butterfly">Butterfly (バタフライ)</option>
-      <option value="Seated Row">Seated Row (ローイング)</option>
-      <option value="Shoulder Press">Shoulder Press (プレス)</option>
-      <option value="Triceps PD">Triceps PD (三頭)</option>
-      <option value="Arm Curl">Arm Curl (二頭)</option>
-      <option value="Hack Lift">Hack Lift (ハック)</option>
-    </select>
-    <div class="aux-inputs">
-      <input type="number" id="aux3-w" placeholder="kg"><span class="unit">kg</span>
-      <input type="number" id="aux3-r" placeholder="reps"><span class="unit">reps</span>
-    </div>
-  </div>
-  <div class="aux-row">
-    <select id="aux4-type">
-      <option value="NONE" selected>-- 選択してください --</option>
-      <option value="Leg Press">Leg Press (レッグプレス)</option>
-      <option value="Leg Extension">Leg Extension (レッグEXT)</option>
-      <option value="Leg Curl">Leg Curl (レッグカール)</option>
-      <option value="Butterfly">Butterfly (バタフライ)</option>
-      <option value="Seated Row">Seated Row (ローイング)</option>
-      <option value="Shoulder Press">Shoulder Press (プレス)</option>
-      <option value="Triceps PD">Triceps PD (三頭)</option>
-      <option value="Arm Curl">Arm Curl (二頭)</option>
-      <option value="Hack Lift">Hack Lift (ハック)</option>
-    </select>
-    <div class="aux-inputs">
-      <input type="number" id="aux4-w" placeholder="kg"><span class="unit">kg</span>
-      <input type="number" id="aux4-r" placeholder="reps"><span class="unit">reps</span>
-    </div>
-  </div>
+  <script>
+    const auxOps=`<option value="NONE">-- Select --</option><option value="Leg Press">Leg Press</option><option value="Leg Extension">Leg Extension</option><option value="Leg Curl">Leg Curl</option><option value="Butterfly">Butterfly</option><option value="Seated Row">Seated Row</option><option value="Shoulder Press">Shoulder Press</option><option value="Triceps PD">Triceps PD</option><option value="Arm Curl">Arm Curl</option><option value="Hack Lift">Hack Lift</option>`;
+    for(let i=1;i<=4;i++) document.write(`<div class="aux-row"><select id="aux${i}-type">${auxOps}</select><div class="aux-inputs"><input type="number" id="aux${i}-w" placeholder="kg"><span class="unit">kg</span><input type="number" id="aux${i}-r" placeholder="reps"><span class="unit">reps</span></div></div>`);
+  </script>
 </div>
 
 <div class="memo-container">
   <label>Memo</label>
-  <input type="text" id="memo-input" placeholder="一言メモ (例: スクワットの深さ良かった)">
+  <input type="text" id="memo-input" placeholder="一言メモ">
 </div>
 
 <div class="btn-container">
-  <button id="generate-btn">画像を生成 (Generate)</button>
+  <button id="generate-btn">記録して画像を生成</button>
+  <div id="sync-status"></div>
+</div>
+
+<div class="section-label">
+  <span>Analytics</span>
+</div>
+<div class="chart-container">
+  <button id="toggle-chart-btn" onclick="toggleChartMode()">🔄 Show MaxWeight</button>
+  <canvas id="growthChartCanvas" style="display: block; width:100%; height:250px;"></canvas>
+</div>
+
+<div class="settings-area">
+  <div style="font-size:0.7rem; color:#888; text-transform:uppercase; margin-bottom:5px;">Data & Sync</div>
+  <input type="text" id="gas-url-input" placeholder="GAS URL (https://script.google.com/...)">
+  <button class="settings-btn" onclick="exportData()">📥 Export JSON (Backup)</button>
 </div>
 
 <div id="result-modal">
@@ -371,264 +125,360 @@
   <div class="modal-text">↓ 長押しして画像を保存 ↓</div>
   <button class="close-btn" onclick="document.getElementById('result-modal').style.display='none'">閉じる</button>
 </div>
-
 <canvas id="logCanvas"></canvas>
 
 <script>
-  // 初期セット (各3セット)
-  window.onload = function() {
-    addSet('sets-container-1', 100, 5);
-    addSet('sets-container-1', null, null);
-    addSet('sets-container-1', null, null);
-    
-    addSet('sets-container-2', null, null);
-    addSet('sets-container-2', null, null);
-    addSet('sets-container-2', null, null);
+  // ==========================================
+  // CONFIG & DATE UTIL
+  // ==========================================
+  const STORAGE_KEY_CURRENT = 'kintore_v8_current';
+  const STORAGE_KEY_HISTORY = 'kintore_v8_history';
+  const STORAGE_KEY_CONFIG  = 'kintore_v8_config';
+
+  const getTodayISO = () => new Date().toISOString().slice(0, 10);
+  const formatDateTime = () => {
+    const d = new Date();
+    return `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
   };
 
-  function addSet(containerId, defaultW = null, defaultR = null) {
-    const container = document.getElementById(containerId);
-    const count = container.children.length + 1;
-    
+  let growthChart = null;
+  let chartMode = 'volume'; // 'volume' or 'maxWeight'
+
+  window.onload = function() {
+    const config = JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG)) || {};
+    if(config.gasUrl) document.getElementById('gas-url-input').value = config.gasUrl;
+    if(config.lastSync) document.getElementById('sync-status').innerText = `最終同期: ${config.lastSync}`;
+
+    if(!loadFromLocal()) {
+        addSet('sets-container-1', 100, 5); addSet('sets-container-1'); addSet('sets-container-1');
+        addSet('sets-container-2'); addSet('sets-container-2'); addSet('sets-container-2');
+    }
+    renderChart();
+  };
+
+  document.getElementById('gas-url-input').addEventListener('change', (e) => {
+    const config = JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG)) || {};
+    config.gasUrl = e.target.value.trim();
+    localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(config));
+  });
+
+  function addSet(containerId, w=null, r=null, rpe=null, fail=false) {
+    const c = document.getElementById(containerId);
     const div = document.createElement('div');
     div.className = 'set-row';
+    const failChecked = fail ? 'checked' : '';
     div.innerHTML = `
-      <span class="set-label">${count}</span>
-      <input type="number" class="mw" placeholder="kg" value="${defaultW !== null ? defaultW : ''}">
-      <input type="number" class="mr" placeholder="reps" value="${defaultR !== null ? defaultR : ''}">
+      <span class="set-label">${c.children.length+1}</span>
+      <input type="number" class="mw" placeholder="kg" value="${w!==null?w:''}"><input type="number" class="mr" placeholder="reps" value="${r!==null?r:''}"><input type="number" class="rpe-input" placeholder="RPE" value="${rpe!==null?rpe:''}">
+      <label class="fail-label" title="失敗/中断">
+        <input type="checkbox" class="fail-checkbox" ${failChecked}>
+        <span class="fail-icon">⚠️</span>
+      </label>
     `;
-    container.appendChild(div);
+    c.appendChild(div);
+  }
+
+  // ==========================================
+  // LOGIC
+  // ==========================================
+  function calculateTotalVolume() {
+    let vol = 0;
+    for(let i=1; i<=8; i++) vol += (parseFloat(document.getElementById(`w${i}`).value)||0) * 10;
+    ['sets-container-1','sets-container-2'].forEach(id=>{
+      document.querySelectorAll(`#${id} .set-row`).forEach(row=>{
+        vol += (parseFloat(row.querySelector('.mw').value)||0)*(parseFloat(row.querySelector('.mr').value)||0);
+      });
+    });
+    for(let i=1; i<=4; i++) vol += (parseFloat(document.getElementById(`aux${i}-w`).value)||0)*(parseFloat(document.getElementById(`aux${i}-r`).value)||0);
+    return Math.round(vol);
+  }
+
+  function calculateMaxWeight() {
+    let maxW = 0;
+    ['sets-container-1','sets-container-2'].forEach(id=>{
+      document.querySelectorAll(`#${id} .set-row`).forEach(row=>{
+        const w = parseFloat(row.querySelector('.mw').value)||0;
+        if(w > maxW) maxW = w;
+      });
+    });
+    return maxW;
+  }
+
+  function getSetsData(id) {
+    return Array.from(document.querySelectorAll(`#${id} .set-row`)).map(r=>({
+      w: r.querySelector('.mw').value, 
+      r: r.querySelector('.mr').value, 
+      rpe: r.querySelector('.rpe-input').value,
+      fail: r.querySelector('.fail-checkbox').checked
+    }));
+  }
+
+  function saveToLocal() {
+    const data = {
+      focus: document.getElementById('focus-select').value,
+      warmup: {}, main: {}, aux: {}, memo: document.getElementById('memo-input').value
+    };
+    for(let i=1; i<=8; i++) data.warmup[`w${i}`] = document.getElementById(`w${i}`).value;
+    data.main.type1 = document.getElementById('main1-type').value;
+    data.main.sets1 = getSetsData('sets-container-1');
+    data.main.type2 = document.getElementById('main2-type').value;
+    data.main.sets2 = getSetsData('sets-container-2');
+    for(let i=1; i<=4; i++) data.aux[`aux${i}`] = {type:document.getElementById(`aux${i}-type`).value, w:document.getElementById(`aux${i}-w`).value, r:document.getElementById(`aux${i}-r`).value};
+    
+    localStorage.setItem(STORAGE_KEY_CURRENT, JSON.stringify(data));
+
+    // History Logic
+    const today = getTodayISO();
+    const vol = calculateTotalVolume();
+    const maxW = calculateMaxWeight();
+    
+    let hist = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)) || [];
+    const idx = hist.findIndex(h => h.date === today);
+    
+    if(idx >= 0) {
+        hist[idx].volume = vol;
+        hist[idx].maxWeight = maxW;
+    } else {
+        hist.push({date: today, volume: vol, maxWeight: maxW});
+    }
+    
+    hist.sort((a,b) => new Date(a.date) - new Date(b.date));
+    if(hist.length > 30) hist = hist.slice(hist.length-30);
+    
+    localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(hist));
+    renderChart();
+  }
+
+  function loadFromLocal() {
+    const json = localStorage.getItem(STORAGE_KEY_CURRENT);
+    if(!json) return false;
+    try {
+      const d = JSON.parse(json);
+      if(d.focus) document.getElementById('focus-select').value = d.focus;
+      for(let i=1; i<=8; i++) if(d.warmup[`w${i}`]) document.getElementById(`w${i}`).value = d.warmup[`w${i}`];
+      if(d.main.type1) document.getElementById('main1-type').value = d.main.type1;
+      restoreSets('sets-container-1', d.main.sets1);
+      if(d.main.type2) document.getElementById('main2-type').value = d.main.type2;
+      restoreSets('sets-container-2', d.main.sets2);
+      for(let i=1; i<=4; i++) {
+        if(d.aux[`aux${i}`]) {
+          const a = d.aux[`aux${i}`];
+          document.getElementById(`aux${i}-type`).value = a.type;
+          document.getElementById(`aux${i}-w`).value = a.w;
+          document.getElementById(`aux${i}-r`).value = a.r;
+        }
+      }
+      if(d.memo) document.getElementById('memo-input').value = d.memo;
+      return true;
+    } catch(e) { return false; }
+  }
+
+  function restoreSets(id, data) {
+    const c = document.getElementById(id); c.innerHTML='';
+    if(data && data.length) data.forEach(s=>addSet(id, s.w, s.r, s.rpe, s.fail));
+    else addSet(id);
+  }
+
+  // ==========================================
+  // CHART
+  // ==========================================
+  function toggleChartMode() {
+    chartMode = (chartMode === 'volume') ? 'maxWeight' : 'volume';
+    document.getElementById('toggle-chart-btn').innerText = (chartMode === 'volume') ? '🔄 Show MaxWeight' : '🔄 Show Volume';
+    renderChart();
+  }
+
+  function renderChart() {
+    const hist = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)) || [];
+    const ctx = document.getElementById('growthChartCanvas').getContext('2d');
+    const labels = hist.map(h => h.date.substring(5).replace('-','/'));
+    
+    let data, label, color, bg;
+    if (chartMode === 'volume') {
+        data = hist.map(h => h.volume);
+        label = 'Volume';
+        color = '#ff453a';
+        bg = 'rgba(255,69,58,0.2)';
+    } else {
+        data = hist.map(h => h.maxWeight || 0);
+        label = 'Max Weight';
+        color = '#ffd700';
+        bg = 'rgba(255, 215, 0, 0.2)';
+    }
+
+    if(growthChart) { 
+        growthChart.data.labels=labels; 
+        growthChart.data.datasets[0].data=data; 
+        growthChart.data.datasets[0].label=label;
+        growthChart.data.datasets[0].borderColor=color;
+        growthChart.data.datasets[0].backgroundColor=bg;
+        growthChart.update(); 
+    } else {
+      growthChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels: labels, datasets: [{ label: label, data: data, borderColor: color, backgroundColor: bg, borderWidth:2, tension:0.3, fill:true }] },
+        options: { responsive:true, maintainAspectRatio:false, scales:{x:{ticks:{color:'#888',maxTicksLimit:5},grid:{color:'#333'}}, y:{ticks:{color:'#888'},grid:{color:'#333'}}}, plugins:{legend:{display:false}} }
+      });
+    }
+  }
+
+  // ==========================================
+  // EXPORT
+  // ==========================================
+  function exportData() {
+    const backup = {
+        current: JSON.parse(localStorage.getItem(STORAGE_KEY_CURRENT)),
+        history: JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)),
+        config: JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG))
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kintore_backup_${getTodayISO()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  // ==========================================
+  // SYNC & GEN
+  // ==========================================
+  async function sendToSheets(volume, maxWeight) {
+    const config = JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG)) || {};
+    if (!config.gasUrl) return;
+
+    const btn = document.getElementById('generate-btn');
+    const statusDiv = document.getElementById('sync-status');
+    const originalText = btn.innerText;
+    btn.innerText = "Syncing...";
+    btn.classList.add('sending');
+
+    const main1 = document.getElementById('main1-type').value;
+    const main2 = document.getElementById('main2-type').value;
+    const memo = document.getElementById('memo-input').value;
+    let auxText = [];
+    for(let i=1; i<=4; i++){ const t = document.getElementById(`aux${i}-type`).value; if(t!=='NONE') auxText.push(t); }
+
+    const formatSets = (id) => {
+        return getSetsData(id).map(s => {
+            if(!s.w || !s.r) return null;
+            let str = `${s.w}kg x ${s.r}`;
+            if(s.rpe) str += ` (@${s.rpe})`;
+            if(s.fail) str += ` (F)`;
+            return str;
+        }).filter(Boolean).join(', ');
+    };
+
+    const payload = {
+        date: getTodayISO(), 
+        focus: document.getElementById('focus-select').value,
+        main1: `${main1}: ${formatSets('sets-container-1')}`,
+        main2: `${main2}: ${formatSets('sets-container-2')}`,
+        aux: auxText.join(', '), memo: memo, volume: volume,
+        maxWeight: maxWeight
+    };
+
+    try {
+        await fetch(config.gasUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        btn.innerText = "Saved & Synced!";
+        const syncTime = formatDateTime();
+        statusDiv.innerText = `最終同期: ${syncTime}`;
+        config.lastSync = syncTime;
+        localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(config));
+        setTimeout(() => { btn.innerText = originalText; btn.classList.remove('sending'); }, 2000);
+    } catch (e) {
+        console.error("Sync Error", e);
+        btn.innerText = "Save Error (Local OK)";
+        setTimeout(() => { btn.innerText = originalText; btn.classList.remove('sending'); }, 2000);
+    }
   }
 
   document.getElementById('generate-btn').addEventListener('click', () => {
+    saveToLocal();
+    const volume = calculateTotalVolume();
+    const maxWeight = calculateMaxWeight();
+    sendToSheets(volume, maxWeight);
+
     const canvas = document.getElementById('logCanvas');
     const ctx = canvas.getContext('2d');
     
-    // データ取得
-    const type1 = document.getElementById('main1-type').value;
     const sets1 = document.querySelectorAll('#sets-container-1 .set-row');
-    const type2 = document.getElementById('main2-type').value;
     const sets2 = document.querySelectorAll('#sets-container-2 .set-row');
-
-    // Step 2 の高さを計算
+    const type1 = document.getElementById('main1-type').value;
+    const type2 = document.getElementById('main2-type').value;
     let maxSets = 0;
-    if(type1 !== 'NONE') maxSets = Math.max(maxSets, sets1.length);
-    if(type2 !== 'NONE') maxSets = Math.max(maxSets, sets2.length);
-    
-    // Step 3 の高さ
-    let activeAuxCount = 0;
-    for(let i=1; i<=4; i++) {
-      if(document.getElementById(`aux${i}-type`).value !== 'NONE') activeAuxCount++;
-    }
-
-    // メモがあるか
+    if(type1!=='NONE') maxSets = Math.max(maxSets, sets1.length);
+    if(type2!=='NONE') maxSets = Math.max(maxSets, sets2.length);
+    let auxCount=0;
+    for(let i=1; i<=4; i++) if(document.getElementById(`aux${i}-type`).value !== 'NONE') auxCount++;
     const memo = document.getElementById('memo-input').value;
-    const memoHeight = memo ? 50 : 0;
 
-    // 全体の高さ計算 (Footer削除分調整)
-    let contentHeight = 400; // Header + Step1
-    if (maxSets > 0) {
-      contentHeight += 70; // Step2 Title + Header
-      contentHeight += maxSets * 30; // Sets
-      contentHeight += 30; // Margin
-    }
-    if (activeAuxCount > 0) {
-      contentHeight += 50; // Step3 Title
-      contentHeight += activeAuxCount * 35; // Items
-      contentHeight += 20; // Margin
-    }
-    contentHeight += memoHeight;
-    contentHeight += 40; // Bottom Margin (reduced)
-
-    // Canvas Size
     canvas.width = 600;
-    canvas.height = contentHeight;
+    let h = 400 + (maxSets?70+maxSets*30+30:0) + (auxCount?50+auxCount*35+20:0) + (memo?50:0) + 40;
+    canvas.height = h;
 
-    // --- Drawing Logic ---
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    const centerX = canvas.width / 2;
+    ctx.fillStyle = "#fff"; ctx.fillRect(0,0,600,h);
+    ctx.fillStyle = "#000"; ctx.textAlign="center"; ctx.font="bold 40px Helvetica"; ctx.fillText("KINTORE",300,55);
+    ctx.fillStyle = "#555"; ctx.font="16px Helvetica";
     
-    // Header
-    ctx.fillStyle = "#000000";
-    ctx.textAlign = "center";
-    ctx.font = "bold 40px Helvetica, Arial, sans-serif"; // Slightly larger
-    ctx.fillText("KINTORE", centerX, 55);
-    
-    ctx.font = "18px Helvetica, Arial, sans-serif";
-    ctx.fillStyle = "#555";
-    const date = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' });
-    ctx.fillText(date, centerX, 85);
-    drawLine(ctx, 105);
+    const dateDisp = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' });
+    const focus = document.getElementById('focus-select').value;
+    ctx.fillText(`${dateDisp}  |  ${focus}  |  VOL: ${volume.toLocaleString()}kg`, 300, 85);
+    ctx.beginPath(); ctx.moveTo(40,105); ctx.lineTo(560,105); ctx.strokeStyle="#ddd"; ctx.stroke();
 
     let y = 145;
+    ctx.textAlign="left"; ctx.fillStyle="#000"; ctx.font="bold 22px Helvetica"; ctx.fillText("Step 1: アップ",40,y); y+=40;
+    const guardians=[{n:"1. Seated Row",w:document.getElementById('w1').value},{n:"2. Shoulder Press",w:document.getElementById('w2').value},{n:"3. Butterfly",w:document.getElementById('w3').value},{n:"4. Triceps PD",w:document.getElementById('w4').value},{n:"5. Arm Curl",w:document.getElementById('w5').value},{n:"6. Leg Ext",w:document.getElementById('w6').value},{n:"7. Leg Curl",w:document.getElementById('w7').value},{n:"8. Hack Lift",w:document.getElementById('w8').value}];
+    ctx.font="18px Helvetica";
+    guardians.forEach((g,i)=>{const x=i%2===0?40:320; if(i%2===0&&i!==0)y+=30; ctx.fillStyle="#444"; ctx.textAlign="left"; ctx.fillText(g.n,x,y); ctx.fillStyle="#000"; ctx.textAlign="right"; ctx.fillText(g.w+"kg",x+240,y);});
+    y+=50; ctx.beginPath(); ctx.moveTo(40,y); ctx.lineTo(560,y); ctx.stroke(); y+=40;
 
-    // STEP 1: Warmup
-    ctx.textAlign = "left";
-    ctx.font = "bold 22px Helvetica, Arial, sans-serif";
-    ctx.fillStyle = "#000";
-    ctx.fillText("Step 1: アップ (Warm-up)", 40, y);
-    y += 40;
-
-    const guardians = [
-      { n: "1. Seated Row", w: document.getElementById('w1').value },
-      { n: "2. Shoulder Press", w: document.getElementById('w2').value },
-      { n: "3. Butterfly", w: document.getElementById('w3').value },
-      { n: "4. Triceps PD", w: document.getElementById('w4').value },
-      { n: "5. Arm Curl", w: document.getElementById('w5').value },
-      { n: "6. Leg Ext", w: document.getElementById('w6').value },
-      { n: "7. Leg Curl", w: document.getElementById('w7').value },
-      { n: "8. Hack Lift", w: document.getElementById('w8').value },
-    ];
-
-    ctx.font = "18px Helvetica, Arial, sans-serif";
-    guardians.forEach((g, i) => {
-      const x = i % 2 === 0 ? 40 : 320;
-      if (i % 2 === 0 && i !== 0) y += 30;
-      ctx.fillStyle = "#444";
-      ctx.textAlign = "left";
-      ctx.fillText(g.n, x, y);
-      ctx.fillStyle = "#000";
-      ctx.font = "bold 18px Helvetica, Arial, sans-serif";
-      ctx.textAlign = "right";
-      ctx.fillText(g.w + "kg", x + 240, y);
-      ctx.font = "18px Helvetica, Arial, sans-serif"; 
-    });
-    y += 50;
-    drawLine(ctx, y);
-    y += 40;
-
-    // STEP 2: Main Events (Table Layout with Grid Lines)
-    if (maxSets > 0) {
-      ctx.textAlign = "left";
-      ctx.font = "bold 22px Helvetica, Arial, sans-serif";
-      ctx.fillStyle = "#000";
-      ctx.fillText("Step 2: メイン種目", 40, y);
-      y += 20;
-
-      // Header Position
-      const headerY = y + 25;
-      
-      ctx.font = "bold 18px Helvetica, Arial, sans-serif";
-      ctx.fillStyle = "#cc0000"; // Red Accent
-      
-      if (type1 !== 'NONE') {
-        ctx.textAlign = "center";
-        ctx.fillText(type1.split(' ')[0], 170, headerY); 
-      }
-      if (type2 !== 'NONE') {
-        ctx.textAlign = "center";
-        ctx.fillText(type2.split(' ')[0], 430, headerY);
-      }
-      
-      y = headerY + 15;
-      
-      // Horizontal Line under Headers
-      ctx.beginPath();
-      ctx.moveTo(40, y);
-      ctx.lineTo(560, y);
-      ctx.strokeStyle = "#555";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      
-      y += 30; // Start of Data
-
-      // Draw Sets
-      ctx.fillStyle = "#000";
-      ctx.font = "20px Helvetica, Arial, sans-serif";
-
-      for (let i = 0; i < maxSets; i++) {
-        // Left Column (Type 1)
-        if (i < sets1.length && type1 !== 'NONE') {
-          const w = sets1[i].querySelector('.mw').value;
-          const r = sets1[i].querySelector('.mr').value;
-          if (w && r) {
-             ctx.textAlign = "center";
-             ctx.fillText(`${w}kg × ${r}`, 170, y);
-          }
+    if(maxSets>0){
+        ctx.textAlign="left"; ctx.fillStyle="#000"; ctx.font="bold 22px Helvetica"; ctx.fillText("Step 2: メイン種目",40,y); y+=20;
+        const hY=y+25; ctx.font="bold 18px Helvetica"; ctx.fillStyle="#cc0000";
+        if(type1!=='NONE'){ctx.textAlign="center"; ctx.fillText(type1.split(' ')[0],170,hY);}
+        if(type2!=='NONE'){ctx.textAlign="center"; ctx.fillText(type2.split(' ')[0],430,hY);}
+        y=hY+15; ctx.beginPath(); ctx.moveTo(40,y); ctx.lineTo(560,y); ctx.strokeStyle="#555"; ctx.stroke(); y+=30;
+        ctx.fillStyle="#000"; ctx.font="20px Helvetica";
+        for(let i=0; i<maxSets; i++){
+            if(i<sets1.length && type1!=='NONE'){
+                const w=sets1[i].querySelector('.mw').value, r=sets1[i].querySelector('.mr').value, rpe=sets1[i].querySelector('.rpe-input').value, fail=sets1[i].querySelector('.fail-checkbox').checked;
+                if(w||r) {
+                    let str = `${w}kg × ${r}`;
+                    if(rpe) str += ` (@${rpe})`;
+                    if(fail) { ctx.fillStyle="#cc0000"; str += ` (Fail)`; } else { ctx.fillStyle="#000"; }
+                    ctx.textAlign="center"; ctx.fillText(str,170,y);
+                }
+            }
+            if(i<sets2.length && type2!=='NONE'){
+                const w=sets2[i].querySelector('.mw').value, r=sets2[i].querySelector('.mr').value, rpe=sets2[i].querySelector('.rpe-input').value, fail=sets2[i].querySelector('.fail-checkbox').checked;
+                if(w||r) {
+                    let str = `${w}kg × ${r}`;
+                    if(rpe) str += ` (@${rpe})`;
+                    if(fail) { ctx.fillStyle="#cc0000"; str += ` (Fail)`; } else { ctx.fillStyle="#000"; }
+                    ctx.textAlign="center"; ctx.fillText(str,430,y);
+                }
+            }
+            y+=30;
         }
-        // Right Column (Type 2)
-        if (i < sets2.length && type2 !== 'NONE') {
-          const w = sets2[i].querySelector('.mw').value;
-          const r = sets2[i].querySelector('.mr').value;
-          if (w && r) {
-             ctx.textAlign = "center";
-             ctx.fillText(`${w}kg × ${r}`, 430, y);
-          }
-        }
-        y += 30;
-      }
-      
-      // Vertical Line in the middle
-      const tableBottomY = y - 15;
-      ctx.beginPath();
-      ctx.moveTo(300, headerY - 25);
-      ctx.lineTo(300, tableBottomY);
-      ctx.strokeStyle = "#ccc";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      y += 10;
-      drawLine(ctx, y);
-      y += 40;
+        ctx.beginPath(); ctx.moveTo(300,hY-25); ctx.lineTo(300,y-15); ctx.strokeStyle="#ccc"; ctx.stroke();
+        y+=10; ctx.beginPath(); ctx.moveTo(40,y); ctx.lineTo(560,y); ctx.strokeStyle="#ddd"; ctx.stroke(); y+=40;
     }
 
-    // STEP 3: Auxiliary
-    if (activeAuxCount > 0) {
-      ctx.textAlign = "left";
-      ctx.font = "bold 22px Helvetica, Arial, sans-serif";
-      ctx.fillStyle = "#000";
-      ctx.fillText("Step 3: 補助トレ", 40, y);
-      y += 35;
-
-      for(let i=1; i<=4; i++) {
-        const type = document.getElementById(`aux${i}-type`).value;
-        const w = document.getElementById(`aux${i}-w`).value;
-        const r = document.getElementById(`aux${i}-r`).value;
-
-        if (type !== "NONE") {
-          ctx.font = "18px Helvetica, Arial, sans-serif";
-          ctx.textAlign = "left";
-          ctx.fillStyle = "#000";
-          ctx.fillText("・" + type, 60, y);
-
-          if (w && r) {
-            ctx.textAlign = "right";
-            ctx.font = "bold 20px Helvetica, Arial, sans-serif";
-            ctx.fillText(`${w}kg × ${r}`, 560, y);
-          }
-          y += 35;
+    if(auxCount>0){
+        ctx.textAlign="left"; ctx.fillStyle="#000"; ctx.font="bold 22px Helvetica"; ctx.fillText("Step 3: 補助トレ",40,y); y+=35;
+        for(let i=1; i<=4; i++){
+            const t=document.getElementById(`aux${i}-type`).value, w=document.getElementById(`aux${i}-w`).value, r=document.getElementById(`aux${i}-r`).value;
+            if(t!=='NONE'){ctx.font="18px Helvetica"; ctx.textAlign="left"; ctx.fillText("・"+t,60,y); if(w&&r){ctx.textAlign="right"; ctx.font="bold 20px Helvetica"; ctx.fillText(`${w}kg × ${r}`,560,y);} y+=35;}
         }
-      }
-      y += 20;
+        y+=20;
     }
+    if(memo){ ctx.textAlign="center"; ctx.font="italic 18px Helvetica"; ctx.fillStyle="#000"; ctx.fillText("Note: "+memo,300,y); }
 
-    // Memo
-    if (memo) {
-      ctx.textAlign = "center";
-      ctx.font = "italic 18px Helvetica, Arial, sans-serif";
-      ctx.fillStyle = "#000";
-      ctx.fillText("Note: " + memo, centerX, y);
-      y += 30;
-    }
-
-    // Footer Removed (Just blank space at bottom)
-
-    // Show Image
-    const dataUrl = canvas.toDataURL('image/png');
-    document.getElementById('result-img').src = dataUrl;
+    document.getElementById('result-img').src = canvas.toDataURL('image/png');
     document.getElementById('result-modal').style.display = 'flex';
   });
-
-  function drawLine(ctx, y) {
-    ctx.beginPath();
-    ctx.moveTo(40, y);
-    ctx.lineTo(560, y);
-    ctx.strokeStyle = "#ddd";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  }
 </script>
-
 </body>
 </html>

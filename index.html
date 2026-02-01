@@ -5,61 +5,98 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>KINTORE LOG</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root { --bg-color: #121212; --card-bg: #1e1e1e; --text-color: #e0e0e0; --accent-color: #ff453a; --input-bg: #2c2c2c; --border-radius: 12px; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; padding-bottom: 120px; -webkit-font-smoothing: antialiased; }
-  h1 { text-align: center; font-weight: bold; color: var(--text-color); margin: 0; letter-spacing: 2px; text-transform: uppercase; font-size: 1.8rem; }
-  .focus-wrapper { display: flex; justify-content: center; margin-bottom: 20px; }
-  #focus-select { background: transparent; color: var(--accent-color); border: 1px solid var(--accent-color); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; text-align: center; width: auto; font-weight: bold; text-transform: uppercase; }
-  .section-label { font-size: 0.9rem; color: var(--accent-color); font-weight: bold; margin-top: 30px; margin-bottom: 10px; border-left: 3px solid var(--accent-color); padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
+  :root {
+    --primary-red: #c62828;
+    --primary-dark: #b71c1c;
+    --bg-color: #c62828;
+    --card-bg: #1e1e1e;
+    --text-color: #ffffff;
+    --input-bg: #2c2c2c;
+  }
+
+  body {
+    font-family: 'Roboto Condensed', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* VIEW SWITCHING */
+  .view-section { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
+  .view-section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* DASHBOARD */
+  header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
+  .app-title { font-size: 1.2rem; font-weight: bold; letter-spacing: 1px; }
+  .settings-icon { font-size: 1.5rem; cursor: pointer; }
+
+  .calendar-wrapper { margin-bottom: 20px; }
+  .month-label { font-size: 2.5rem; font-weight: bold; line-height: 1; margin-bottom: 10px; }
+  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
+  .weekday { font-size: 0.7rem; color: rgba(255,255,255,0.7); margin-bottom: 5px; }
+  .day-cell { height: 35px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; position: relative; cursor: pointer; }
+  .day-cell.today { font-weight: bold; text-decoration: underline; }
+  .day-cell.active { background-color: #fff; color: var(--primary-red); border-radius: 50%; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+  .stats-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 20px; }
+  .stat-card { background-color: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+  .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.8); display: block; margin-bottom: 5px;}
+  .stat-value { font-size: 1.8rem; font-weight: bold; }
+  .stat-icon { font-size: 1.5rem; opacity: 0.8; }
+
+  .dash-footer { display: flex; gap: 10px; margin-top: 10px; }
+  .big-btn { background-color: #fff; color: var(--primary-red); border: none; padding: 15px; border-radius: 12px; font-size: 1rem; font-weight: bold; flex: 2; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .big-btn:active { transform: scale(0.98); }
+
+  /* INPUT FORM */
+  #input-view { background-color: #121212; min-height: 100vh; }
+  .form-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .back-btn { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+  .section-label { font-size: 0.9rem; color: var(--primary-red); font-weight: bold; margin-top: 25px; margin-bottom: 10px; border-left: 3px solid var(--primary-red); padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .card { background-color: var(--card-bg); padding: 10px; border-radius: 12px; margin-bottom: 8px; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .card { background-color: var(--card-bg); padding: 10px; border-radius: var(--border-radius); display: flex; flex-direction: column; justify-content: space-between; }
-  label { font-size: 0.7rem; color: #aaa; margin-bottom: 4px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .input-group { display: flex; align-items: baseline; gap: 4px; }
+  .main-event-wrapper { background-color: var(--card-bg); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+  
   input, select { background-color: var(--input-bg); border: 1px solid #333; color: #fff; border-radius: 6px; padding: 8px; font-size: 1rem; width: 100%; text-align: center; -webkit-appearance: none; }
-  input:focus, select:focus { outline: none; border-color: var(--accent-color); }
-  .unit { font-size: 0.7rem; color: #666; white-space: nowrap; }
-  .main-event-wrapper { background-color: var(--card-bg); border-radius: var(--border-radius); padding: 12px; margin-bottom: 12px; }
-  .sets-container { margin-top: 5px; }
+  input:focus, select:focus { outline: none; border-color: var(--primary-red); }
+  
+  .warmup-name-input {
+    background: transparent !important; border: none !important; color: #aaa !important; 
+    font-size: 0.75rem !important; text-align: left !important; padding: 0 !important; width: 100% !important; margin-bottom: 4px;
+  }
+  .warmup-name-input:focus { color: #fff !important; border-bottom: 1px solid #555 !important; border-radius: 0 !important; }
+
   .set-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
-  .set-label { font-size: 0.75rem; color: #666; width: 20px; text-align: center; }
-  .rpe-input { width: 45px !important; font-size: 0.8rem !important; color: #ffd700 !important; border-color: #444 !important; }
+  .set-label { width: 20px; text-align: center; font-size: 0.8rem; color: #888; }
+  .rpe-input { width: 45px !important; color: #ffd700 !important; }
   
-  /* --- 修正箇所: シンプルなボタンクラス --- */
-  .fail-btn { 
-    display: flex; align-items: center; justify-content: center; 
-    width: 35px; height: 35px; 
-    font-size: 1.2rem; color: #444; 
-    cursor: pointer; user-select: none;
-    transition: all 0.2s ease;
-    border-radius: 50%; /* タップしやすいように */
-  }
-  .fail-btn:hover { background-color: rgba(255,255,255,0.05); }
-  .fail-btn.active { 
-    color: #ff453a; 
-    text-shadow: 0 0 8px rgba(255, 69, 58, 0.6); 
-  }
-  /* -------------------------------------- */
+  .fail-btn { display: flex; align-items: center; justify-content: center; width: 35px; height: 35px; font-size: 1.2rem; color: #444; cursor: pointer; user-select: none; transition: all 0.2s ease; }
+  .fail-btn:active { transform: scale(0.9); }
+  .fail-btn.active { color: #ff453a; text-shadow: 0 0 8px rgba(255, 69, 58, 0.6); }
 
-  .add-set-btn { background-color: #333; color: #aaa; border: 1px dashed #555; width: 100%; padding: 8px; border-radius: 6px; font-size: 0.85rem; margin-top: 5px; }
-  .aux-row { background-color: var(--card-bg); padding: 10px; border-radius: var(--border-radius); margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; }
-  .aux-inputs { display: flex; gap: 8px; align-items: center; }
-  .memo-container { margin-top: 20px; }
-  #memo-input { text-align: left; padding: 12px; }
-  .btn-container { margin-top: 30px; text-align: center; position: sticky; bottom: 20px; z-index: 100; }
-  button#generate-btn { background: linear-gradient(135deg, #ff453a, #d63a30); color: white; border: none; padding: 16px 40px; font-size: 1.1rem; font-weight: bold; border-radius: 30px; width: 90%; max-width: 350px; box-shadow: 0 4px 20px rgba(0,0,0,0.6); backdrop-filter: blur(5px); transition: transform 0.1s; }
-  button#generate-btn:active { transform: scale(0.98); }
-  button#generate-btn.sending { background: #555; cursor: wait; }
-  #sync-status { margin-top: 8px; font-size: 0.75rem; color: #666; min-height: 1.2em; }
+  .add-set-btn { background: #333; color: #aaa; border: 1px dashed #555; width: 100%; padding: 8px; border-radius: 6px; margin-top: 5px; }
   
-  .settings-area { margin-top: 50px; padding: 20px; background: #1a1a1a; border-radius: 12px; }
-  #gas-url-input { font-size: 0.8rem; color: #aaa; text-align: left; margin-bottom: 10px; }
-  .settings-btn { background: #333; color: #ccc; border: 1px solid #444; padding: 8px 15px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; margin-top: 5px; }
+  .prev-info { font-size: 0.75rem; color: #888; text-align: right; margin-bottom: 5px; min-height: 1em; }
+  .prev-info span { color: #ffd700; font-weight: bold; }
 
-  #result-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-  #result-img { max-width: 100%; max-height: 80vh; border-radius: 8px; object-fit: contain; }
-  .modal-text { color: #fff; margin-top: 15px; text-align: center; font-size: 0.9rem; }
-  .close-btn { margin-top: 20px; color: #fff; background: #333; border: none; padding: 10px 30px; border-radius: 20px; }
+  .aux-row { background-color: var(--card-bg); padding: 10px; border-radius: 12px; margin-bottom: 8px; }
+  .aux-inputs { display: flex; gap: 8px; align-items: center; margin-top: 5px; }
+
+  #generate-btn { background: linear-gradient(135deg, #c62828, #b71c1c); color: white; border: none; padding: 16px; font-size: 1.1rem; font-weight: bold; border-radius: 30px; width: 100%; box-shadow: 0 4px 15px rgba(0,0,0,0.5); margin-top: 20px; }
+  
+  /* Modal */
+  #detail-modal, #settings-modal, #result-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; }
+  .modal-content { background: #222; padding: 20px; border-radius: 15px; width: 85%; max-height: 80vh; overflow-y: auto; color: #fff; }
+  .modal-close { margin-top: 15px; background: #444; border: none; color: #fff; padding: 10px 20px; border-radius: 20px; width: 100%; }
+  
+  #gas-url-input { text-align: left; margin-bottom: 10px; font-size: 0.8rem; }
+  #result-img { max-width: 100%; border-radius: 8px; }
   
   .chart-container { margin-top: 10px; background-color: var(--card-bg); padding: 15px; border-radius: var(--border-radius); position: relative; }
   #toggle-chart-btn { position: absolute; top: 15px; right: 15px; background: #333; color: #fff; border: 1px solid #555; padding: 4px 10px; border-radius: 15px; font-size: 0.7rem; cursor: pointer; z-index: 10; }
@@ -68,189 +105,227 @@
 </head>
 <body>
 
-<h1>KINTORE</h1>
-<div class="focus-wrapper">
-  <select id="focus-select">
-    <option value="STRENGTH">FOCUS: STRENGTH</option>
-    <option value="HYPERTROPHY">FOCUS: HYPERTROPHY</option>
-    <option value="TECHNIQUE">FOCUS: TECHNIQUE</option>
-    <option value="SPEED">FOCUS: SPEED</option>
-    <option value="DELOAD">FOCUS: DELOAD</option>
-    <option value="NONE">FOCUS: NONE</option>
-  </select>
+<div id="dashboard-view" class="view-section active">
+  <header>
+    <div class="settings-icon" onclick="openSettings()">⚙️</div>
+    <div class="app-title">筋トレ MEMO</div>
+    <div style="width: 24px;"></div>
+  </header>
+
+  <div class="calendar-wrapper">
+    <div class="month-label" id="cal-month-label"></div>
+    <div class="calendar-grid">
+      <div class="weekday">SUN</div><div class="weekday">MON</div><div class="weekday">TUE</div><div class="weekday">WED</div><div class="weekday">THU</div><div class="weekday">FRI</div><div class="weekday">SAT</div>
+    </div>
+    <div class="calendar-grid" id="calendar-days"></div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div><span class="stat-label">合計負荷量 / 7日間</span><div class="stat-value" id="stat-7days">0.0 t</div></div>
+      <div class="stat-icon">🚗</div>
+    </div>
+    <div class="stat-card">
+      <div><span class="stat-label">合計負荷量 / 28日間</span><div class="stat-value" id="stat-28days">0.0 t</div></div>
+      <div class="stat-icon">🚌</div>
+    </div>
+    <div class="stat-card">
+      <div><span class="stat-label">総合計負荷量</span><div class="stat-value" id="stat-total">0.0 t</div></div>
+      <div class="stat-icon">✈️</div>
+    </div>
+  </div>
+
+  <div class="dash-footer">
+    <button class="big-btn" onclick="switchView('input')"><span>⊕ 本日のトレーニングを追加</span></button>
+  </div>
 </div>
 
-<div class="section-label">Step 1: アップ (Warm-up)</div>
-<div class="grid">
-  <script>
-    const wList=["Seated Row","Shoulder Press","Butterfly","Triceps PD","Arm Curl","Leg Ext","Leg Curl","Hack Lift"];
-    const wDef=[40,30,25,30,30,50,35,40];
-    wList.forEach((n,i)=>document.write(`<div class="card"><label>${i+1}. ${n}</label><div class="input-group"><input type="number" id="w${i+1}" value="${wDef[i]}"><span class="unit">kg</span></div></div>`));
-  </script>
+<div id="input-view" class="view-section">
+  <div class="form-header">
+    <button class="back-btn" onclick="switchView('dashboard')">✕</button>
+    <span>NEW LOG</span>
+    <div style="width: 24px;"></div>
+  </div>
+
+  <div style="text-align: center; margin-bottom: 20px;">
+    <select id="focus-select" style="width: auto; border-radius: 20px; border: 1px solid var(--primary-red); background: transparent; font-weight: bold; color: var(--primary-red);">
+      <option value="STRENGTH">FOCUS: STRENGTH</option>
+      <option value="HYPERTROPHY">FOCUS: HYPERTROPHY</option>
+      <option value="TECHNIQUE">FOCUS: TECHNIQUE</option>
+      <option value="SPEED">FOCUS: SPEED</option>
+      <option value="DELOAD">FOCUS: DELOAD</option>
+    </select>
+  </div>
+
+  <div class="section-label">Step 1: アップ (Warm-up)</div>
+  <div class="grid" id="warmup-container">
+    </div>
+
+  <div class="section-label">Step 2: メイン種目 (BIG 3)</div>
+  
+  <div class="main-event-wrapper">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+      <select id="main1-type" style="width:60%; text-align:left;" onchange="updatePrevInfo(1)">
+        <option value="BENCH PRESS" selected>BENCH PRESS</option>
+        <option value="SQUAT">SQUAT</option>
+        <option value="DEADLIFT">DEADLIFT</option>
+      </select>
+      <div id="prev-info-1" class="prev-info"></div>
+    </div>
+    <div id="sets-container-1" class="sets-container"></div>
+    <button class="add-set-btn" onclick="addSet('sets-container-1')">+ セットを追加</button>
+  </div>
+
+  <div class="main-event-wrapper">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+      <select id="main2-type" style="width:60%; text-align:left;" onchange="updatePrevInfo(2)">
+        <option value="NONE">-- 2種目め (なし) --</option>
+        <option value="SQUAT" selected>SQUAT</option>
+        <option value="BENCH PRESS">BENCH PRESS</option>
+        <option value="DEADLIFT">DEADLIFT</option>
+      </select>
+      <div id="prev-info-2" class="prev-info"></div>
+    </div>
+    <div id="sets-container-2" class="sets-container"></div>
+    <button class="add-set-btn" onclick="addSet('sets-container-2')">+ セットを追加</button>
+  </div>
+
+  <div class="section-label">Step 3: 補助トレ</div>
+  <div id="aux-container">
+    <script>
+      const auxOps=`<option value="NONE">-- Select --</option><option value="Leg Press">Leg Press</option><option value="Leg Extension">Leg Extension</option><option value="Leg Curl">Leg Curl</option><option value="Butterfly">Butterfly</option><option value="Seated Row">Seated Row</option><option value="Shoulder Press">Shoulder Press</option><option value="Triceps PD">Triceps PD</option><option value="Arm Curl">Arm Curl</option><option value="Hack Lift">Hack Lift</option>`;
+      for(let i=1;i<=4;i++) document.write(`<div class="aux-row"><select id="aux${i}-type" style="text-align:left;">${auxOps}</select><div class="aux-inputs"><input type="number" id="aux${i}-w" placeholder="kg"><span class="unit">kg</span><input type="number" id="aux${i}-r" placeholder="reps"><span class="unit">reps</span></div></div>`);
+    </script>
+  </div>
+
+  <div class="memo-container">
+    <label>Memo</label>
+    <input type="text" id="memo-input" placeholder="フォームの違和感など">
+  </div>
+
+  <div class="btn-container">
+    <button id="generate-btn">LOG & SAVE</button>
+    <div id="sync-status" style="margin-top:5px; font-size:0.7rem; color:#888; text-align:center;"></div>
+  </div>
 </div>
 
-<div class="section-label">Step 2: メイン種目 (BIG 3)</div>
-<div class="main-event-wrapper">
-  <select id="main1-type"><option value="BENCH PRESS" selected>BENCH PRESS</option><option value="SQUAT">SQUAT</option><option value="DEADLIFT">DEADLIFT</option></select>
-  <div id="sets-container-1" class="sets-container"></div>
-  <button class="add-set-btn" onclick="addSet('sets-container-1')">+ セットを追加</button>
-</div>
-<div class="main-event-wrapper">
-  <select id="main2-type"><option value="NONE">-- 2種目め (なし) --</option><option value="SQUAT" selected>SQUAT</option><option value="BENCH PRESS">BENCH PRESS</option><option value="DEADLIFT">DEADLIFT</option></select>
-  <div id="sets-container-2" class="sets-container"></div>
-  <button class="add-set-btn" onclick="addSet('sets-container-2')">+ セットを追加</button>
+<div id="detail-modal" style="display:none;" onclick="closeModal('detail-modal')">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <h3 id="modal-date" style="border-bottom:1px solid #444; padding-bottom:10px;"></h3>
+    <div id="modal-body" style="font-size:0.9rem; line-height:1.6;"></div>
+    <button class="modal-close" onclick="closeModal('detail-modal')">閉じる</button>
+  </div>
 </div>
 
-<div class="section-label">Step 3: 補助トレ (Auxiliary)</div>
-<div id="aux-container">
-  <script>
-    // ラットプルダウンを追加
-    const auxOps=`<option value="NONE">-- Select --</option><option value="Lat Pulldown">Lat Pulldown (ラットプル)</option><option value="Leg Press">Leg Press</option><option value="Leg Extension">Leg Extension</option><option value="Leg Curl">Leg Curl</option><option value="Butterfly">Butterfly</option><option value="Seated Row">Seated Row</option><option value="Shoulder Press">Shoulder Press</option><option value="Triceps PD">Triceps PD</option><option value="Arm Curl">Arm Curl</option><option value="Hack Lift">Hack Lift</option>`;
-    for(let i=1;i<=4;i++) document.write(`<div class="aux-row"><select id="aux${i}-type">${auxOps}</select><div class="aux-inputs"><input type="number" id="aux${i}-w" placeholder="kg"><span class="unit">kg</span><input type="number" id="aux${i}-r" placeholder="reps"><span class="unit">reps</span></div></div>`);
-  </script>
+<div id="settings-modal" style="display:none;" onclick="closeModal('settings-modal')">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <h3>設定</h3>
+    <label style="font-size:0.8rem; color:#aaa;">GAS URL</label>
+    <input type="text" id="gas-url-input" placeholder="https://script.google.com/...">
+    <button style="margin-top:20px; background:#c62828; color:#fff; border:none; padding:10px; width:100%; border-radius:8px;" onclick="exportData()">バックアップ (JSON Export)</button>
+    <button class="modal-close" onclick="closeModal('settings-modal')">閉じる</button>
+  </div>
 </div>
 
-<div class="memo-container">
-  <label>Memo</label>
-  <input type="text" id="memo-input" placeholder="一言メモ">
+<div id="result-modal" style="display:none; flex-direction:column;">
+  <img id="result-img" src="" alt="Result">
+  <div class="modal-text">↓ 画像を長押しして保存 ↓</div>
+  <button class="close-btn" onclick="document.getElementById('result-modal').style.display='none'">閉じる</button>
 </div>
 
-<div class="btn-container">
-  <button id="generate-btn">記録して画像を生成</button>
-  <div id="sync-status"></div>
-</div>
-
-<div class="section-label">
-  <span>Analytics</span>
-</div>
+<div class="section-label">Analytics</div>
 <div class="chart-container">
   <button id="toggle-chart-btn" onclick="toggleChartMode()">🔄 Show MaxWeight</button>
   <canvas id="growthChartCanvas" style="display: block; width:100%; height:250px;"></canvas>
 </div>
 
-<div class="settings-area">
-  <div style="font-size:0.7rem; color:#888; text-transform:uppercase; margin-bottom:5px;">Data & Sync</div>
-  <input type="text" id="gas-url-input" value="https://script.google.com/macros/s/AKfycbyOJvgxN7KjRdD1JQR6shRDyt0Cl_GpMFBjdcmZoc-j4LbgI6MNHA1aZ8SMI9JSCfTC/exec">
-  <button class="settings-btn" onclick="exportData()">📥 Export JSON (Backup)</button>
-</div>
-
-<div id="result-modal">
-  <img id="result-img" src="" alt="Result">
-  <div class="modal-text">↓ 長押しして画像を保存 ↓</div>
-  <button class="close-btn" onclick="document.getElementById('result-modal').style.display='none'">閉じる</button>
-</div>
 <canvas id="logCanvas"></canvas>
 
 <script>
   // ==========================================
-  // CONFIG & DATE UTIL
+  // CONFIGURATIONS (Readable Constants)
   // ==========================================
-  const STORAGE_KEY_CURRENT = 'kintore_v8_current';
-  const STORAGE_KEY_HISTORY = 'kintore_v8_history';
-  const STORAGE_KEY_CONFIG  = 'kintore_v8_config';
-
-  const getTodayISO = () => new Date().toISOString().slice(0, 10);
-  const formatDateTime = () => {
-    const d = new Date();
-    return `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+  
+  // Volume Calculation Rules
+  const VOLUME_RULE = {
+    warmupReps: 10,        // Warmup reps constant for volume calc
+    includeWarmup: true    // Whether to include warmup volume in total
   };
 
+  const STORAGE_KEY_CURRENT = 'kintore_v7_current';
+  const STORAGE_KEY_HISTORY = 'kintore_v7_history';
+  const STORAGE_KEY_CONFIG  = 'kintore_v7_config';
+  const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbyOJvgxN7KjRdD1JQR6shRDyt0Cl_GpMFBjdcmZoc-j4LbgI6MNHA1aZ8SMI9JSCfTC/exec";
+
+  const getTodayISO = () => new Date().toISOString().slice(0, 10);
   let growthChart = null;
-  let chartMode = 'volume'; // 'volume' or 'maxWeight'
+  let chartMode = 'volume';
+
+  const defaultWarmups = [
+    {n:"Seated Row", w:40}, {n:"Shoulder Press", w:30}, {n:"Butterfly", w:25}, {n:"Triceps PD", w:30},
+    {n:"Arm Curl", w:30}, {n:"Leg Ext", w:50}, {n:"Leg Curl", w:35}, {n:"Hack Lift", w:40}
+  ];
 
   window.onload = function() {
     let config = JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG)) || {};
-    
-    // URL設定
-    const defaultGasUrl = "https://script.google.com/macros/s/AKfycbyOJvgxN7KjRdD1JQR6shRDyt0Cl_GpMFBjdcmZoc-j4LbgI6MNHA1aZ8SMI9JSCfTC/exec";
-    if (!config.gasUrl) {
-      config.gasUrl = defaultGasUrl;
-      localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(config));
-    }
-    
+    if (!config.gasUrl) { config.gasUrl = DEFAULT_GAS_URL; localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(config)); }
     document.getElementById('gas-url-input').value = config.gasUrl;
-    if(config.lastSync) document.getElementById('sync-status').innerText = `最終同期: ${config.lastSync}`;
-
-    if(!loadFromLocal()) {
-        addSet('sets-container-1', 100, 5); addSet('sets-container-1'); addSet('sets-container-1');
-        addSet('sets-container-2'); addSet('sets-container-2'); addSet('sets-container-2');
-    }
+    
+    loadFromLocal();
+    
+    renderCalendar();
+    renderStats();
+    updatePrevInfo(1);
+    updatePrevInfo(2);
     renderChart();
   };
 
-  document.getElementById('gas-url-input').addEventListener('change', (e) => {
-    const config = JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG)) || {};
-    config.gasUrl = e.target.value.trim();
-    localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(config));
-  });
-
-  // --- 修正: Toggle関数 ---
-  function toggleFail(btn) {
-    btn.classList.toggle('active');
-  }
-
-  function addSet(containerId, w=null, r=null, rpe=null, fail=false) {
-    const c = document.getElementById(containerId);
-    const div = document.createElement('div');
-    div.className = 'set-row';
-    // クラスによる判定に変更
-    const activeClass = fail ? 'active' : '';
-    div.innerHTML = `
-      <span class="set-label">${c.children.length+1}</span>
-      <input type="number" class="mw" placeholder="kg" value="${w!==null?w:''}"><input type="number" class="mr" placeholder="reps" value="${r!==null?r:''}"><input type="number" class="rpe-input" placeholder="RPE" value="${rpe!==null?rpe:''}">
-      <div class="fail-btn ${activeClass}" onclick="toggleFail(this)">⚠️</div>
-    `;
-    c.appendChild(div);
-  }
-
   // ==========================================
-  // LOGIC
+  // LOGIC: STRUCTURED DATA
   // ==========================================
-  function calculateTotalVolume() {
-    let vol = 0;
-    for(let i=1; i<=8; i++) vol += (parseFloat(document.getElementById(`w${i}`).value)||0) * 10;
-    ['sets-container-1','sets-container-2'].forEach(id=>{
-      document.querySelectorAll(`#${id} .set-row`).forEach(row=>{
-        vol += (parseFloat(row.querySelector('.mw').value)||0)*(parseFloat(row.querySelector('.mr').value)||0);
-      });
+  
+  function getSetsStructured(id) {
+    const rows = document.querySelectorAll(`#${id} .set-row`);
+    const sets = [];
+    rows.forEach(r => {
+        sets.push({
+            w: r.querySelector('.mw').value,
+            r: r.querySelector('.mr').value,
+            rpe: r.querySelector('.rpe-input').value,
+            fail: r.querySelector('.fail-btn').classList.contains('active')
+        });
     });
-    for(let i=1; i<=4; i++) vol += (parseFloat(document.getElementById(`aux${i}-w`).value)||0)*(parseFloat(document.getElementById(`aux${i}-r`).value)||0);
-    return Math.round(vol);
+    return sets;
   }
 
-  function calculateMaxWeight() {
-    let maxW = 0;
-    ['sets-container-1','sets-container-2'].forEach(id=>{
-      document.querySelectorAll(`#${id} .set-row`).forEach(row=>{
-        const w = parseFloat(row.querySelector('.mw').value)||0;
-        if(w > maxW) maxW = w;
-      });
-    });
-    return maxW;
-  }
-
-  function getSetsData(id) {
-    return Array.from(document.querySelectorAll(`#${id} .set-row`)).map(r=>({
-      w: r.querySelector('.mw').value, 
-      r: r.querySelector('.mr').value, 
-      rpe: r.querySelector('.rpe-input').value,
-      fail: r.querySelector('.fail-btn').classList.contains('active') // クラス判定に変更
-    }));
+  function getWarmupData() {
+    const arr = [];
+    for(let i=1; i<=8; i++) {
+        arr.push({
+            n: document.getElementById(`w${i}-name`).value,
+            w: document.getElementById(`w${i}`).value
+        });
+    }
+    return arr;
   }
 
   function saveToLocal() {
-    const data = {
-      focus: document.getElementById('focus-select').value,
-      warmup: {}, main: {}, aux: {}, memo: document.getElementById('memo-input').value
+    const current = {
+        focus: document.getElementById('focus-select').value,
+        warmup: getWarmupData(),
+        main1: { type: document.getElementById('main1-type').value, sets: getSetsStructured('sets-container-1') },
+        main2: { type: document.getElementById('main2-type').value, sets: getSetsStructured('sets-container-2') },
+        aux: [],
+        memo: document.getElementById('memo-input').value
     };
-    for(let i=1; i<=8; i++) data.warmup[`w${i}`] = document.getElementById(`w${i}`).value;
-    data.main.type1 = document.getElementById('main1-type').value;
-    data.main.sets1 = getSetsData('sets-container-1');
-    data.main.type2 = document.getElementById('main2-type').value;
-    data.main.sets2 = getSetsData('sets-container-2');
-    for(let i=1; i<=4; i++) data.aux[`aux${i}`] = {type:document.getElementById(`aux${i}-type`).value, w:document.getElementById(`aux${i}-w`).value, r:document.getElementById(`aux${i}-r`).value};
-    
-    localStorage.setItem(STORAGE_KEY_CURRENT, JSON.stringify(data));
+    for(let i=1; i<=4; i++) {
+        current.aux.push({
+            type: document.getElementById(`aux${i}-type`).value,
+            w: document.getElementById(`aux${i}-w`).value,
+            r: document.getElementById(`aux${i}-r`).value
+        });
+    }
+    localStorage.setItem(STORAGE_KEY_CURRENT, JSON.stringify(current));
 
     const today = getTodayISO();
     const vol = calculateTotalVolume();
@@ -259,165 +334,269 @@
     let hist = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)) || [];
     const idx = hist.findIndex(h => h.date === today);
     
-    if(idx >= 0) {
-        hist[idx].volume = vol;
-        hist[idx].maxWeight = maxW;
-    } else {
-        hist.push({date: today, volume: vol, maxWeight: maxW});
-    }
+    const historyEntry = {
+        date: today,
+        volume: vol,
+        maxWeight: maxW,
+        focus: current.focus,
+        memo: current.memo,
+        main1: current.main1, 
+        main2: current.main2, 
+        aux: current.aux
+    };
+
+    if(idx >= 0) hist[idx] = historyEntry;
+    else hist.push(historyEntry);
     
     hist.sort((a,b) => new Date(a.date) - new Date(b.date));
-    if(hist.length > 30) hist = hist.slice(hist.length-30);
-    
     localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(hist));
     renderChart();
   }
 
   function loadFromLocal() {
     const json = localStorage.getItem(STORAGE_KEY_CURRENT);
-    if(!json) return false;
-    try {
-      const d = JSON.parse(json);
-      if(d.focus) document.getElementById('focus-select').value = d.focus;
-      for(let i=1; i<=8; i++) if(d.warmup[`w${i}`]) document.getElementById(`w${i}`).value = d.warmup[`w${i}`];
-      if(d.main.type1) document.getElementById('main1-type').value = d.main.type1;
-      restoreSets('sets-container-1', d.main.sets1);
-      if(d.main.type2) document.getElementById('main2-type').value = d.main.type2;
-      restoreSets('sets-container-2', d.main.sets2);
-      for(let i=1; i<=4; i++) {
-        if(d.aux[`aux${i}`]) {
-          const a = d.aux[`aux${i}`];
-          document.getElementById(`aux${i}-type`).value = a.type;
-          document.getElementById(`aux${i}-w`).value = a.w;
-          document.getElementById(`aux${i}-r`).value = a.r;
-        }
-      }
-      if(d.memo) document.getElementById('memo-input').value = d.memo;
-      return true;
-    } catch(e) { return false; }
+    const container = document.getElementById('warmup-container');
+    container.innerHTML = ''; 
+
+    if(json) {
+        try {
+            const d = JSON.parse(json);
+            if(d.focus) document.getElementById('focus-select').value = d.focus;
+            
+            // Restore Warmup
+            const wData = d.warmup || defaultWarmups;
+            wData.forEach((w, i) => {
+                container.innerHTML += `
+                  <div class="card">
+                    <input type="text" id="w${i+1}-name" value="${w.n}" class="warmup-name-input">
+                    <div class="input-group"><input type="number" id="w${i+1}" value="${w.w}"><span class="unit">kg</span></div>
+                  </div>`;
+            });
+
+            if(d.main1) {
+                document.getElementById('main1-type').value = d.main1.type;
+                restoreSets('sets-container-1', d.main1.sets);
+            }
+            if(d.main2) {
+                document.getElementById('main2-type').value = d.main2.type;
+                restoreSets('sets-container-2', d.main2.sets);
+            }
+            
+            if(d.aux) {
+                d.aux.forEach((a, i) => {
+                    if(i < 4) {
+                        const idx = i+1;
+                        document.getElementById(`aux${idx}-type`).value = a.type;
+                        document.getElementById(`aux${idx}-w`).value = a.w;
+                        document.getElementById(`aux${idx}-r`).value = a.r;
+                    }
+                });
+            }
+            if(d.memo) document.getElementById('memo-input').value = d.memo;
+            return true;
+        } catch(e) { console.error(e); }
+    }
+
+    // Fallback
+    defaultWarmups.forEach((w, i) => {
+        container.innerHTML += `
+          <div class="card">
+            <input type="text" id="w${i+1}-name" value="${w.n}" class="warmup-name-input">
+            <div class="input-group"><input type="number" id="w${i+1}" value="${w.w}"><span class="unit">kg</span></div>
+          </div>`;
+    });
+    addSet('sets-container-1', 100, 5); addSet('sets-container-1'); addSet('sets-container-1');
+    addSet('sets-container-2'); addSet('sets-container-2'); addSet('sets-container-2');
+    return false;
   }
 
-  function restoreSets(id, data) {
+  function restoreSets(id, sets) {
     const c = document.getElementById(id); c.innerHTML='';
-    if(data && data.length) data.forEach(s=>addSet(id, s.w, s.r, s.rpe, s.fail));
+    if(sets && sets.length) sets.forEach(s=>addSet(id, s.w, s.r, s.rpe, s.fail));
     else addSet(id);
   }
 
   // ==========================================
-  // CHART
+  // CALCULATIONS (Using VOLUME_RULE)
   // ==========================================
-  function toggleChartMode() {
-    chartMode = (chartMode === 'volume') ? 'maxWeight' : 'volume';
-    document.getElementById('toggle-chart-btn').innerText = (chartMode === 'volume') ? '🔄 Show MaxWeight' : '🔄 Show Volume';
-    renderChart();
-  }
+  function calculateTotalVolume() {
+    let vol = 0;
 
-  function renderChart() {
-    const hist = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)) || [];
-    const ctx = document.getElementById('growthChartCanvas').getContext('2d');
-    const labels = hist.map(h => h.date.substring(5).replace('-','/'));
-    
-    let data, label, color, bg;
-    if (chartMode === 'volume') {
-        data = hist.map(h => h.volume);
-        label = 'Volume';
-        color = '#ff453a';
-        bg = 'rgba(255,69,58,0.2)';
-    } else {
-        data = hist.map(h => h.maxWeight || 0);
-        label = 'Max Weight';
-        color = '#ffd700';
-        bg = 'rgba(255, 215, 0, 0.2)';
+    // 1. Warm-up
+    if (VOLUME_RULE.includeWarmup) {
+      // Warmups are dynamically generated in the grid
+      // We need to query all wX inputs
+      for(let i=1; i<=8; i++) {
+         // Check if element exists to be safe
+         const el = document.getElementById(`w${i}`);
+         if(el) {
+             vol += (parseFloat(el.value)||0) * VOLUME_RULE.warmupReps;
+         }
+      }
     }
 
-    if(growthChart) { 
-        growthChart.data.labels=labels; 
-        growthChart.data.datasets[0].data=data; 
-        growthChart.data.datasets[0].label=label;
-        growthChart.data.datasets[0].borderColor=color;
-        growthChart.data.datasets[0].backgroundColor=bg;
-        growthChart.update(); 
-    } else {
-      growthChart = new Chart(ctx, {
-        type: 'line',
-        data: { labels: labels, datasets: [{ label: label, data: data, borderColor: color, backgroundColor: bg, borderWidth:2, tension:0.3, fill:true }] },
-        options: { responsive:true, maintainAspectRatio:false, scales:{x:{ticks:{color:'#888',maxTicksLimit:5},grid:{color:'#333'}}, y:{ticks:{color:'#888'},grid:{color:'#333'}}}, plugins:{legend:{display:false}} }
+    // 2. Main
+    ['sets-container-1','sets-container-2'].forEach(id=>{
+      document.querySelectorAll(`#${id} .set-row`).forEach(row=>{
+        vol += (parseFloat(row.querySelector('.mw').value)||0)*(parseFloat(row.querySelector('.mr').value)||0);
       });
+    });
+
+    // 3. Aux
+    for(let i=1; i<=4; i++) {
+        const wEl = document.getElementById(`aux${i}-w`);
+        const rEl = document.getElementById(`aux${i}-r`);
+        if(wEl && rEl) {
+            vol += (parseFloat(wEl.value)||0)*(parseFloat(rEl.value)||0);
+        }
     }
+    
+    return Math.round(vol);
+  }
+
+  function calculateMaxWeight() {
+    let maxW = 0;
+    ['sets-container-1','sets-container-2'].forEach(id=>{
+      document.querySelectorAll(`#${id} .set-row`).forEach(row=>{ const w = parseFloat(row.querySelector('.mw').value)||0; if(w>maxW) maxW=w; });
+    });
+    return maxW;
   }
 
   // ==========================================
-  // EXPORT
+  // ANALYTICS & PREV INFO
   // ==========================================
-  function exportData() {
-    const backup = {
-        current: JSON.parse(localStorage.getItem(STORAGE_KEY_CURRENT)),
-        history: JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)),
-        config: JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG))
-    };
-    const blob = new Blob([JSON.stringify(backup, null, 2)], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `kintore_backup_${getTodayISO()}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+  function updatePrevInfo(slotId) {
+    const type = document.getElementById(`main${slotId}-type`).value;
+    const div = document.getElementById(`prev-info-${slotId}`);
+    if(type === 'NONE') { div.innerHTML=''; return; }
+
+    const hist = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)) || [];
+    let maxW = 0;
+
+    for(let i = hist.length - 1; i >= 0; i--) {
+      const h = hist[i];
+      if(h.main1) {
+          if (typeof h.main1 === 'string' && h.main1.includes(type)) { // Old format support
+              const m = extractMaxWeightString(h.main1); if(m>maxW) maxW=m; break;
+          } else if (h.main1.type === type && h.main1.sets) { // New Object format
+              const m = extractMaxWeightObj(h.main1.sets); if(m>maxW) maxW=m; break;
+          }
+      }
+      if(h.main2) {
+          if (typeof h.main2 === 'string' && h.main2.includes(type)) {
+              const m = extractMaxWeightString(h.main2); if(m>maxW) maxW=m; break;
+          } else if (h.main2.type === type && h.main2.sets) {
+              const m = extractMaxWeightObj(h.main2.sets); if(m>maxW) maxW=m; break;
+          }
+      }
+    }
+    div.innerHTML = maxW > 0 ? `Prev Max: <span>${maxW}kg</span>` : `New Record`;
+  }
+
+  function extractMaxWeightObj(sets) {
+      let max = 0;
+      sets.forEach(s => { const w = parseFloat(s.w)||0; if(w>max) max=w; });
+      return max;
+  }
+  function extractMaxWeightString(str) {
+      const matches = str.match(/(\d+(\.\d+)?)kg/g);
+      if(!matches) return 0;
+      let max = 0;
+      matches.forEach(m => { const w = parseFloat(m.replace('kg','')); if(w>max) max=w; });
+      return max;
   }
 
   // ==========================================
-  // SYNC & GEN
+  // SYNC
   // ==========================================
+  function formatSetsString(sets) {
+      return sets.map(s => {
+          if(!s.w || !s.r) return null;
+          let str = `${s.w}kg x ${s.r}`;
+          if(s.rpe) str += ` (@${s.rpe})`;
+          if(s.fail) str += ` (F)`;
+          return str;
+      }).filter(Boolean).join(', ');
+  }
+
   async function sendToSheets(volume, maxWeight) {
     const config = JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG)) || {};
     if (!config.gasUrl) return;
 
     const btn = document.getElementById('generate-btn');
     const statusDiv = document.getElementById('sync-status');
-    const originalText = btn.innerText;
-    btn.innerText = "Syncing...";
-    btn.classList.add('sending');
+    btn.innerText = "Syncing..."; btn.classList.add('sending');
 
-    const main1 = document.getElementById('main1-type').value;
-    const main2 = document.getElementById('main2-type').value;
-    const memo = document.getElementById('memo-input').value;
+    const m1Data = { type: document.getElementById('main1-type').value, sets: getSetsStructured('sets-container-1') };
+    const m2Data = { type: document.getElementById('main2-type').value, sets: getSetsStructured('sets-container-2') };
+    
+    const main1Str = `${m1Data.type}: ${formatSetsString(m1Data.sets)}`;
+    const main2Str = `${m2Data.type}: ${formatSetsString(m2Data.sets)}`;
+    
     let auxText = [];
     for(let i=1; i<=4; i++){ const t = document.getElementById(`aux${i}-type`).value; if(t!=='NONE') auxText.push(t); }
-
-    const formatSets = (id) => {
-        return getSetsData(id).map(s => {
-            if(!s.w || !s.r) return null;
-            let str = `${s.w}kg x ${s.r}`;
-            if(s.rpe) str += ` (@${s.rpe})`;
-            if(s.fail) str += ` (F)`;
-            return str;
-        }).filter(Boolean).join(', ');
-    };
 
     const payload = {
         date: getTodayISO(), 
         focus: document.getElementById('focus-select').value,
-        main1: `${main1}: ${formatSets('sets-container-1')}`,
-        main2: `${main2}: ${formatSets('sets-container-2')}`,
-        aux: auxText.join(', '), memo: memo, volume: volume,
+        main1: main1Str,
+        main2: main2Str,
+        aux: auxText.join(', '), 
+        memo: document.getElementById('memo-input').value, 
+        volume: volume,
         maxWeight: maxWeight
     };
 
     try {
         await fetch(config.gasUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
         btn.innerText = "Saved & Synced!";
-        const syncTime = formatDateTime();
+        const d = new Date();
+        const syncTime = `${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
         statusDiv.innerText = `最終同期: ${syncTime}`;
         config.lastSync = syncTime;
         localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(config));
-        setTimeout(() => { btn.innerText = originalText; btn.classList.remove('sending'); }, 2000);
-    } catch (e) {
-        console.error("Sync Error", e);
-        btn.innerText = "Save Error (Local OK)";
-        setTimeout(() => { btn.innerText = originalText; btn.classList.remove('sending'); }, 2000);
-    }
+        setTimeout(() => { btn.innerText = "LOG & SAVE"; btn.classList.remove('sending'); }, 2000);
+    } catch (e) { console.error(e); btn.innerText = "Save Error"; setTimeout(() => { btn.innerText = "LOG & SAVE"; btn.classList.remove('sending'); }, 2000); }
   }
 
+  // ==========================================
+  // UI HANDLERS
+  // ==========================================
+  function addSet(containerId, w=null, r=null, rpe=null, fail=false) {
+    const c = document.getElementById(containerId);
+    const div = document.createElement('div');
+    div.className = 'set-row';
+    const failClass = fail ? 'active' : '';
+    div.innerHTML = `
+      <span class="set-label">${c.children.length+1}</span>
+      <input type="number" class="mw" placeholder="kg" value="${w!==null?w:''}"><input type="number" class="mr" placeholder="reps" value="${r!==null?r:''}"><input type="number" class="rpe-input" placeholder="RPE" value="${rpe!==null?rpe:''}">
+      <div class="fail-btn ${failClass}" onclick="this.classList.toggle('active')">⚠️</div>
+    `;
+    c.appendChild(div);
+  }
+
+  function switchView(viewName) {
+    document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+    document.getElementById(viewName + '-view').classList.add('active');
+    if(viewName==='dashboard'){ renderCalendar(); renderStats(); renderChart(); }
+    else if(viewName==='input'){ updatePrevInfo(1); updatePrevInfo(2); }
+  }
+  function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; }
+  function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+  function toggleChartMode() { chartMode = (chartMode === 'volume') ? 'maxWeight' : 'volume'; document.getElementById('toggle-chart-btn').innerText = (chartMode === 'volume') ? '🔄 Show MaxWeight' : '🔄 Show Volume'; renderChart(); }
+
+  document.getElementById('gas-url-input').addEventListener('change', (e) => {
+    let config = JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG)) || {}; config.gasUrl = e.target.value.trim(); localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(config));
+  });
+
+  function exportData() {
+    const backup = { current: JSON.parse(localStorage.getItem(STORAGE_KEY_CURRENT)), history: JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)), config: JSON.parse(localStorage.getItem(STORAGE_KEY_CONFIG)) };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], {type: 'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `kintore_backup_${getTodayISO()}.json`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  }
+
+  // Generate Button Logic
   document.getElementById('generate-btn').addEventListener('click', () => {
     saveToLocal();
     const volume = calculateTotalVolume();
@@ -427,10 +606,12 @@
     const canvas = document.getElementById('logCanvas');
     const ctx = canvas.getContext('2d');
     
-    const sets1 = document.querySelectorAll('#sets-container-1 .set-row');
-    const sets2 = document.querySelectorAll('#sets-container-2 .set-row');
+    // Draw Canvas
+    const sets1 = getSetsStructured('sets-container-1');
+    const sets2 = getSetsStructured('sets-container-2');
     const type1 = document.getElementById('main1-type').value;
     const type2 = document.getElementById('main2-type').value;
+    
     let maxSets = 0;
     if(type1!=='NONE') maxSets = Math.max(maxSets, sets1.length);
     if(type2!=='NONE') maxSets = Math.max(maxSets, sets2.length);
@@ -443,19 +624,17 @@
     canvas.height = h;
 
     ctx.fillStyle = "#fff"; ctx.fillRect(0,0,600,h);
-    ctx.fillStyle = "#000"; ctx.textAlign="center"; ctx.font="bold 40px Helvetica"; ctx.fillText("KINTORE",300,55);
+    ctx.fillStyle = "#000"; ctx.textAlign="center"; ctx.font="bold 40px Helvetica"; ctx.fillText("SUZUKI DOJO",300,55);
     ctx.fillStyle = "#555"; ctx.font="16px Helvetica";
-    
     const dateDisp = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' });
-    const focus = document.getElementById('focus-select').value;
-    ctx.fillText(`${dateDisp}  |  ${focus}  |  VOL: ${volume.toLocaleString()}kg`, 300, 85);
+    ctx.fillText(`${dateDisp}  |  ${document.getElementById('focus-select').value}  |  VOL: ${volume.toLocaleString()}kg`, 300, 85);
     ctx.beginPath(); ctx.moveTo(40,105); ctx.lineTo(560,105); ctx.strokeStyle="#ddd"; ctx.stroke();
 
     let y = 145;
     ctx.textAlign="left"; ctx.fillStyle="#000"; ctx.font="bold 22px Helvetica"; ctx.fillText("Step 1: アップ",40,y); y+=40;
-    const guardians=[{n:"1. Seated Row",w:document.getElementById('w1').value},{n:"2. Shoulder Press",w:document.getElementById('w2').value},{n:"3. Butterfly",w:document.getElementById('w3').value},{n:"4. Triceps PD",w:document.getElementById('w4').value},{n:"5. Arm Curl",w:document.getElementById('w5').value},{n:"6. Leg Ext",w:document.getElementById('w6').value},{n:"7. Leg Curl",w:document.getElementById('w7').value},{n:"8. Hack Lift",w:document.getElementById('w8').value}];
+    const wData = getWarmupData();
     ctx.font="18px Helvetica";
-    guardians.forEach((g,i)=>{const x=i%2===0?40:320; if(i%2===0&&i!==0)y+=30; ctx.fillStyle="#444"; ctx.textAlign="left"; ctx.fillText(g.n,x,y); ctx.fillStyle="#000"; ctx.textAlign="right"; ctx.fillText(g.w+"kg",x+240,y);});
+    wData.forEach((w,i)=>{const x=i%2===0?40:320; if(i%2===0&&i!==0)y+=30; ctx.fillStyle="#444"; ctx.textAlign="left"; ctx.fillText(w.n,x,y); ctx.fillStyle="#000"; ctx.textAlign="right"; ctx.fillText(w.w+"kg",x+240,y);});
     y+=50; ctx.beginPath(); ctx.moveTo(40,y); ctx.lineTo(560,y); ctx.stroke(); y+=40;
 
     if(maxSets>0){
@@ -466,26 +645,15 @@
         y=hY+15; ctx.beginPath(); ctx.moveTo(40,y); ctx.lineTo(560,y); ctx.strokeStyle="#555"; ctx.stroke(); y+=30;
         ctx.fillStyle="#000"; ctx.font="20px Helvetica";
         for(let i=0; i<maxSets; i++){
-            if(i<sets1.length && type1!=='NONE'){
-                const w=sets1[i].querySelector('.mw').value, r=sets1[i].querySelector('.mr').value, rpe=sets1[i].querySelector('.rpe-input').value, fail=sets1[i].querySelector('.fail-btn').classList.contains('active');
-                if(w||r) {
-                    let str = `${w}kg × ${r}`;
-                    if(rpe) str += ` (@${rpe})`;
-                    if(fail) { ctx.fillStyle="#cc0000"; str += ` (Fail)`; } else { ctx.fillStyle="#000"; }
-                    ctx.textAlign="center";
-                    ctx.fillText(str,170,y);
-                }
-            }
-            if(i<sets2.length && type2!=='NONE'){
-                const w=sets2[i].querySelector('.mw').value, r=sets2[i].querySelector('.mr').value, rpe=sets2[i].querySelector('.rpe-input').value, fail=sets2[i].querySelector('.fail-btn').classList.contains('active');
-                if(w||r) {
-                    let str = `${w}kg × ${r}`;
-                    if(rpe) str += ` (@${rpe})`;
-                    if(fail) { ctx.fillStyle="#cc0000"; str += ` (Fail)`; } else { ctx.fillStyle="#000"; }
-                    ctx.textAlign="center";
-                    ctx.fillText(str,430,y);
-                }
-            }
+            const drawSet = (s, x) => {
+                if(!s || (!s.w && !s.r)) return;
+                let str = `${s.w}kg × ${s.r}`;
+                if(s.rpe) str += ` (@${s.rpe})`;
+                if(s.fail) { ctx.fillStyle="#cc0000"; str += ` (F)`; } else { ctx.fillStyle="#000"; }
+                ctx.textAlign="center"; ctx.fillText(str,x,y);
+            };
+            if(type1!=='NONE') drawSet(sets1[i], 170);
+            if(type2!=='NONE') drawSet(sets2[i], 430);
             y+=30;
         }
         ctx.beginPath(); ctx.moveTo(300,hY-25); ctx.lineTo(300,y-15); ctx.strokeStyle="#ccc"; ctx.stroke();
@@ -505,6 +673,81 @@
     document.getElementById('result-img').src = canvas.toDataURL('image/png');
     document.getElementById('result-modal').style.display = 'flex';
   });
+
+  // Render Functions
+  function renderCalendar() {
+    const today = new Date(); const year = today.getFullYear(); const month = today.getMonth();
+    const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    document.getElementById('cal-month-label').innerText = `${months[month]} ${year}`;
+    const container = document.getElementById('calendar-days'); container.innerHTML = '';
+    const firstDay = new Date(year, month, 1).getDay(); const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const hist = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)) || [];
+    const activeDays = new Set(hist.map(h => h.date));
+    for(let i=0; i<firstDay; i++) container.innerHTML += `<div></div>`;
+    for(let d=1; d<=daysInMonth; d++) {
+      const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const div = document.createElement('div'); div.className = 'day-cell'; div.innerText = d;
+      if(activeDays.has(dateStr)) { div.classList.add('active'); div.onclick = () => showDayDetail(dateStr); }
+      if(d === today.getDate()) div.classList.add('today');
+      container.appendChild(div);
+    }
+  }
+
+  function showDayDetail(dateStr) {
+    const hist = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)) || [];
+    const entry = hist.find(h => h.date === dateStr);
+    if(!entry) return;
+    document.getElementById('modal-date').innerText = dateStr;
+    
+    // Handle both String (old) and Object (new) formats for display
+    const renderMain = (m) => {
+        if(!m) return "";
+        if(typeof m === 'string') return m; // Old format
+        // New format: Object
+        let html = `<strong>${m.type}</strong><br>`;
+        m.sets.forEach((s, i) => {
+            if(s.w || s.r) html += `Set ${i+1}: ${s.w}kg x ${s.r}${s.rpe?' @'+s.rpe:''}${s.fail?' (Fail)':''}<br>`;
+        });
+        return html;
+    };
+
+    let html = `
+      <div style="margin-bottom:10px; color:#aaa;">Focus: <span style="color:#fff;">${entry.focus}</span></div>
+      <div style="margin-bottom:15px; font-weight:bold; color:#ff453a;">Vol: ${parseInt(entry.volume).toLocaleString()}kg</div>
+      <div style="background:#333; padding:10px; border-radius:8px; margin-bottom:10px;">
+        <div style="font-size:0.8rem; color:#888;">Main Event</div>
+        <div>${renderMain(entry.main1)}</div>
+        <div style="margin-top:10px; border-top:1px solid #444; padding-top:10px;">${renderMain(entry.main2)}</div>
+      </div>
+    `;
+    if(entry.memo) html += `<div style="font-style:italic; color:#ccc;">"${entry.memo}"</div>`;
+    document.getElementById('modal-body').innerHTML = html;
+    document.getElementById('detail-modal').style.display = 'flex';
+  }
+
+  function renderStats() {
+    const hist = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)) || [];
+    const today = new Date(); const oneDay = 24*60*60*1000;
+    let vol7=0, vol28=0, volTotal=0;
+    hist.forEach(h => {
+      const d = new Date(h.date); const diffDays = Math.floor((today - d) / oneDay); const v = parseInt(h.volume) || 0;
+      if(diffDays < 7) vol7 += v; if(diffDays < 28) vol28 += v; volTotal += v;
+    });
+    document.getElementById('stat-7days').innerText = (vol7 / 1000).toFixed(1) + " t";
+    document.getElementById('stat-28days').innerText = (vol28 / 1000).toFixed(1) + " t";
+    document.getElementById('stat-total').innerText = (volTotal / 1000).toFixed(1) + " t";
+  }
+
+  function renderChart() {
+    const hist = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)) || [];
+    const ctx = document.getElementById('growthChartCanvas').getContext('2d');
+    const labels = hist.map(h => h.date.substring(5).replace('-','/'));
+    let data, label, color, bg;
+    if (chartMode === 'volume') { data = hist.map(h => h.volume); label = 'Volume'; color = '#ff453a'; bg = 'rgba(255,69,58,0.2)'; }
+    else { data = hist.map(h => h.maxWeight || 0); label = 'Max Weight'; color = '#ffd700'; bg = 'rgba(255, 215, 0, 0.2)'; }
+    if(growthChart) { growthChart.data.labels=labels; growthChart.data.datasets[0].data=data; growthChart.data.datasets[0].label=label; growthChart.data.datasets[0].borderColor=color; growthChart.data.datasets[0].backgroundColor=bg; growthChart.update(); }
+    else { growthChart = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ label: label, data: data, borderColor: color, backgroundColor: bg, borderWidth:2, tension:0.3, fill:true }] }, options: { responsive:true, maintainAspectRatio:false, scales:{x:{ticks:{color:'#888',maxTicksLimit:5},grid:{color:'#333'}}, y:{ticks:{color:'#888'},grid:{color:'#333'}}}, plugins:{legend:{display:false}} } }); }
+  }
 </script>
 </body>
 </html>
